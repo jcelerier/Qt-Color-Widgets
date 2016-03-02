@@ -57,10 +57,10 @@ int main(int argc, char *argv[])
     run = a.arguments().contains("--run");
 
     QColor demo_color(64,172,143,128);
-
     color_widgets::ColorPalette palette1;
     color_widgets::ColorPalette palette2;
     int palette_columns = 12;
+    /*
     palette1.setName("Palette 1");
     palette2.setName("Palette 2");
     palette1.setColumns(palette_columns);
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
     hue_slider.setColor(demo_color);
     screenshot(hue_slider);
 
-
+*/
     color_widgets::ColorListWidget list_widget;
     list_widget.setColors({
         demo_color,

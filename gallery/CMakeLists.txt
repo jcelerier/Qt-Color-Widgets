@@ -18,6 +18,8 @@ set(SCREENSHOT_SOURCES screenshot.cpp)
 set(SCREENSHOT_BINARY screenshot_bin)
 add_executable(${SCREENSHOT_BINARY} EXCLUDE_FROM_ALL ${SCREENSHOT_SOURCES})
 target_link_libraries(${SCREENSHOT_BINARY} ${COLOR_WIDGETS_LIBRARY})
+target_include_directories(${SCREENSHOT_BINARY} PRIVATE ${PROJECT_SOURCE_DIR}/QtColorWidgets)
+set_target_properties(${SCREENSHOT_BINARY} PROPERTIES CXX_STANDARD 14)
 
 add_custom_target(gallery
     COMMAND ${CMAKE_CURRENT_BINARY_DIR}/${SCREENSHOT_BINARY}
