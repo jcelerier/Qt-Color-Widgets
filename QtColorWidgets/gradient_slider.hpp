@@ -26,6 +26,7 @@
 #include "colorwidgets_global.hpp"
 
 #include <QSlider>
+#include <QPen>
 #include <QGradient>
 
 namespace color_widgets {
@@ -37,6 +38,9 @@ class QCP_EXPORT GradientSlider : public QSlider
 {
     Q_OBJECT
     Q_PROPERTY(QBrush background READ background WRITE setBackground)
+    Q_PROPERTY(int verticalSpacing READ verticalSpacing WRITE setVerticalSpacing)
+    Q_PROPERTY(QPen border READ border WRITE setBorder)
+    Q_PROPERTY(QLinearGradient gradient READ gradient WRITE setGradient)
     Q_PROPERTY(QGradientStops colors READ colors WRITE setColors DESIGNABLE false)
     Q_PROPERTY(QColor firstColor READ firstColor WRITE setFirstColor STORED false)
     Q_PROPERTY(QColor lastColor READ lastColor WRITE setLastColor STORED false)
@@ -51,6 +55,16 @@ public:
     QBrush background() const;
     /// Set the background, it's visible for transparent gradient stops
     void setBackground(const QBrush &bg);
+
+    /// Get the vertical spacing.
+    int verticalSpacing() const;
+    /// Set the vertical spacing.
+    void setVerticalSpacing(const int &verticalSpacing);
+
+    /// Get the border pen.
+    QPen border() const;
+    /// Set the border pen.
+    void setBorder(const QPen &border);
 
     /// Get the colors that make up the gradient
     QGradientStops colors() const;

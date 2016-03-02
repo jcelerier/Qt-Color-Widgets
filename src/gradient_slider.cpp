@@ -43,9 +43,13 @@ class GradientSlider::Private
 public:
     QLinearGradient gradient;
     QBrush back;
+    int verticalSpacing;
+    QPen border;
 
     Private() :
-        back(Qt::darkGray, Qt::DiagCrossPattern)
+        back(Qt::darkGray, Qt::DiagCrossPattern),
+        verticalSpacing(0),
+        border(Qt::NoPen)
     {
         loadResource();
         back.setTexture(QPixmap(QLatin1String(":/color_widgets/alphaback.png")));
@@ -77,6 +81,29 @@ void GradientSlider::setBackground(const QBrush &bg)
     p->back = bg;
     update();
 }
+
+int GradientSlider::verticalSpacing() const
+{
+    return p->verticalSpacing;
+}
+
+void GradientSlider::setVerticalSpacing(const int &verticalSpacing)
+{
+    p->verticalSpacing = verticalSpacing;
+    update();
+}
+
+QPen GradientSlider::border() const
+{
+    return p->border;
+}
+
+void GradientSlider::setBorder(const QPen &border)
+{
+    p->border = border;
+    update();
+}
+
 
 QGradientStops GradientSlider::colors() const
 {
@@ -170,11 +197,11 @@ void GradientSlider::paintEvent(QPaintEvent *)
     else
         p->gradient.setFinalStop(0, 1);
 
-    painter.setPen(Qt::NoPen);
+    painter.setPen(p->border);
     painter.setBrush(p->back);
-    painter.drawRect(1,1,geometry().width()-2,geometry().height()-2);
+    painter.drawRect(1+p->border.width(),1+p->border.width()+p->verticalSpacing,geometry().width()-2-p->border.width()*2,geometry().height()-2-p->verticalSpacing*2-p->border.width()*2);
     painter.setBrush(p->gradient);
-    painter.drawRect(1,1,geometry().width()-2,geometry().height()-2);
+    painter.drawRect(1+p->border.width(),1+p->border.width()+p->verticalSpacing,geometry().width()-2-p->border.width()*2,geometry().height()-2-p->verticalSpacing*2-p->border.width()*2);
 
     painter.setClipping(false);
     QStyleOptionSlider opt_slider;

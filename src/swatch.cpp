@@ -43,6 +43,9 @@ public:
     QSize        color_size; ///< Preferred size for the color squares
     ColorSizePolicy size_policy;
     QPen         border;
+    QPen         selection;
+    int          margin;
+    QColor       emptyColor;
     int          forced_rows;
     int          forced_columns;
     bool         readonly;  ///< Whether the palette can be modified via user interaction
@@ -60,6 +63,9 @@ public:
           color_size(16,16),
           size_policy(Hint),
           border(Qt::black, 1),
+          selection(Qt::gray, 2, Qt::DotLine),
+          margin(0),
+          emptyColor(QColor(0,0,0,0)),
           forced_rows(0),
           forced_columns(0),
           readonly(false),
@@ -107,7 +113,7 @@ public:
         if ( event->mimeData()->hasColor() )
         {
             drop_color = event->mimeData()->colorData().value<QColor>();
-            drop_color.setAlpha(255);
+            
         }
         else if ( event->mimeData()->hasText() )
         {
@@ -126,7 +132,8 @@ public:
                     drop_index++;
                 // Dragged to the middle of the square, overwrite existing color
                 else if ( event->posF().x() > drop_rect.top() + drop_rect.height() / 4 &&
-                        ( event->dropAction() != Qt::MoveAction || event->source() != owner ) )
+                        ( event->dropAction() != Qt::MoveAction || event->source() != owner || 
+                          palette.colorAt(drop_index) == emptyColor ) )
                     drop_overwrite = true;
             }
             else
@@ -136,7 +143,8 @@ public:
                     drop_index++;
                 // Dragged to the middle of the square, overwrite existing color
                 else if ( event->posF().x() > drop_rect.left() + drop_rect.width() / 4 &&
-                        ( event->dropAction() != Qt::MoveAction || event->source() != owner ) )
+                        ( event->dropAction() != Qt::MoveAction || event->source() != owner || 
+                          palette.colorAt(drop_index) == emptyColor ) )
                     drop_overwrite = true;
             }
         }
@@ -189,10 +197,10 @@ public:
             return QRectF();
 
         return QRectF(
-            index % rowcols.width() * color_size.width(),
-            index / rowcols.width() * color_size.height(),
-            color_size.width(),
-            color_size.height()
+            index % rowcols.width() * color_size.width() + margin,
+            index / rowcols.width() * color_size.height() + margin,
+            color_size.width() - margin * 2,
+            color_size.height() - margin * 2
         );
     }
     /**
@@ -240,8 +248,8 @@ QSize Swatch::sizeHint() const
         return QSize();
 
     return QSize(
-        p->color_size.width()  * rowcols.width(),
-        p->color_size.height() * rowcols.height()
+        (p->color_size.width() + p->margin * 2)  * rowcols.width(),
+        (p->color_size.height() + p->margin * 2) * rowcols.height()
     );
 }
 
@@ -330,6 +338,11 @@ void Swatch::paintEvent(QPaintEvent* event)
         return;
 
     QSizeF color_size = p->actualColorSize(rowcols);
+    QPixmap alpha_pattern(":/color_widgets/alphaback.png");
+    QPen penEmptyBorder = p->border;
+    QColor colorEmptyBorder = p->border.color();
+    colorEmptyBorder.setAlpha(56);
+    penEmptyBorder.setColor(colorEmptyBorder);
     QPainter painter(this);
 
     QStyleOptionFrame panel;
@@ -347,6 +360,15 @@ void Swatch::paintEvent(QPaintEvent* event)
     {
         for ( int x = 0; x < rowcols.width() && i < count; x++, i++ )
         {
+            if(p->palette.colorAt(i) == p->emptyColor)
+            {
+              painter.setBrush(Qt::NoBrush);
+              painter.setPen(penEmptyBorder);
+              painter.drawRect(p->indexRect(i, rowcols, color_size));
+              continue;
+            }
+            painter.setBrush(alpha_pattern);
+            painter.drawRect(p->indexRect(i, rowcols, color_size));
             painter.setBrush(p->palette.colorAt(i));
             painter.drawRect(p->indexRect(i, rowcols, color_size));
         }
@@ -391,7 +413,7 @@ void Swatch::paintEvent(QPaintEvent* event)
         painter.setBrush(Qt::transparent);
         painter.setPen(QPen(Qt::darkGray, 2));
         painter.drawRect(rect);
-        painter.setPen(QPen(Qt::gray, 2, Qt::DotLine));
+        painter.setPen(p->selection);
         painter.drawRect(rect);
     }
 }
@@ -621,7 +643,12 @@ void Swatch::dropEvent(QDropEvent *event)
     if ( event->dropAction() == Qt::MoveAction && event->source() == this )
     {
         // Not moved => noop
-        if ( p->drop_index != p->drag_index && p->drop_index != p->drag_index + 1 )
+        if ( p->drop_index != p->drag_index && p->palette.colorAt(p->drop_index) == p->emptyColor )
+        {
+            p->palette.setColorAt(p->drag_index, p->emptyColor, name);
+            p->palette.setColorAt(p->drop_index, p->drop_color, name);
+        }
+        else if ( p->drop_index != p->drag_index && p->drop_index != p->drag_index + 1 )
         {
             // Erase the old color
             p->palette.eraseColor(p->drag_index);
@@ -777,6 +804,51 @@ void Swatch::setBorder(const QPen& border)
     {
         p->border = border;
         emit borderChanged(border);
+        update();
+    }
+}
+
+int Swatch::margin() const
+{
+    return p->margin;
+}
+
+void Swatch::setMargin(const int& margin)
+{
+    if ( margin != p->margin )
+    {
+        p->margin = margin;
+        emit marginChanged(margin);
+        update();
+    }
+}
+
+QPen Swatch::selection() const
+{
+    return p->selection;
+}
+
+void Swatch::setSelection(const QPen& selection)
+{
+    if ( selection != p->selection )
+    {
+        p->selection = selection;
+        emit selectionChanged(selection);
+        update();
+    }
+}
+
+QColor Swatch::emptyColor() const
+{
+    return p->emptyColor;
+}
+
+void Swatch::setEmptyColor(const QColor& emptyColor)
+{
+    if ( emptyColor != p->emptyColor )
+    {
+        p->emptyColor = emptyColor;
+        emit emptyColorChanged(emptyColor);
         update();
     }
 }
