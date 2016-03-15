@@ -72,7 +72,7 @@ QtColorWidgets/color_names.hpp
 )
 
 # Library
-add_library(${COLOR_WIDGETS_LIBRARY}
+add_library(${COLOR_WIDGETS_LIBRARY} STATIC
     src/color_widgets.qrc
     ${SOURCES}
     ${HEADERS})
