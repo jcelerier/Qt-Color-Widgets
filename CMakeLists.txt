@@ -81,13 +81,15 @@ target_include_directories(${COLOR_WIDGETS_LIBRARY}
     PRIVATE "${PROJECT_SOURCE_DIR}/QtColorWidgets"
     PUBLIC "${PROJECT_SOURCE_DIR}")
 set_target_properties(${COLOR_WIDGETS_LIBRARY} PROPERTIES CXX_STANDARD 14)
+if(EXAMPLES)
+
 add_subdirectory(gallery)
 
-find_package(Qt5Designer)
+find_package(Qt5Designer QUIET)
 if(Qt5Designer_FOUND)
     add_subdirectory(color_widgets_designer_plugin)
 endif()
-
+endif()
 
 set(CMAKE_AUTOMOC OFF)
 set(CMAKE_AUTOUIC OFF)
