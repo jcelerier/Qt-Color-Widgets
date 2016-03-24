@@ -44,7 +44,6 @@ class QCP_EXPORT GradientSlider : public QSlider
     Q_PROPERTY(QGradientStops colors READ colors WRITE setColors DESIGNABLE false)
     Q_PROPERTY(QColor firstColor READ firstColor WRITE setFirstColor STORED false)
     Q_PROPERTY(QColor lastColor READ lastColor WRITE setLastColor STORED false)
-    Q_PROPERTY(QLinearGradient gradient READ gradient WRITE setGradient)
 
 public:
     explicit GradientSlider(QWidget *parent = 0);
