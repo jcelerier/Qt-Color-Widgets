@@ -74,16 +74,23 @@ QtColorWidgets/color_names.hpp
 # Library
 
 qt5_add_resources(QRCS src/color_widgets.qrc)
-add_library(${COLOR_WIDGETS_LIBRARY} STATIC
+if(APPLE AND NOT ISCORE_STATIC_PLUGINS)
+add_library(${COLOR_WIDGETS_LIBRARY}
     ${QRCS}
     ${SOURCES}
     ${HEADERS})
+else()
+	add_library(${COLOR_WIDGETS_LIBRARY} STATIC
+		${QRCS}
+		${SOURCES}
+		${HEADERS})
+endif()
 target_link_libraries(${COLOR_WIDGETS_LIBRARY} PUBLIC Qt5::Widgets)
 target_include_directories(${COLOR_WIDGETS_LIBRARY}
     PRIVATE "${PROJECT_SOURCE_DIR}/QtColorWidgets"
     PUBLIC "${PROJECT_SOURCE_DIR}")
-set_target_properties(${COLOR_WIDGETS_LIBRARY} PROPERTIES CXX_STANDARD 14)
-
+set_target_properties(${COLOR_WIDGETS_LIBRARY} PROPERTIES
+	CXX_STANDARD 14)
 if(EXAMPLES)
   add_subdirectory(gallery)
 
