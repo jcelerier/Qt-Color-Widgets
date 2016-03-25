@@ -68,7 +68,7 @@ GradientSlider::GradientSlider(Qt::Orientation orientation, QWidget *parent) :
 
 GradientSlider::~GradientSlider()
 {
-	delete p;
+    delete p;
 }
 
 QBrush GradientSlider::background() const

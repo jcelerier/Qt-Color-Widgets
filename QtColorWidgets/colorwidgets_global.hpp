@@ -2,7 +2,9 @@
 #define QT_COLOR_WIDGETS_GLOBAL_H
 
 #include <QtCore/QtGlobal>
-
+#include <colorwidgets-qt5_export.h>
+#define QCP_EXPORT COLORWIDGETS_QT5_EXPORT
+/*
 #if defined(QTCOLORWIDGETS_LIBRARY)
 #    define QCP_EXPORT Q_DECL_EXPORT
 #elif defined(QTCOLORWIDGETS_STATICALLY_LINKED)
@@ -10,5 +12,5 @@
 #else
 #    define QCP_EXPORT Q_DECL_IMPORT
 #endif
-
+*/
 #endif // QT_COLOR_WIDGETS_GLOBAL_H

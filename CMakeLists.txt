@@ -22,6 +22,7 @@ project(${COLOR_WIDGETS_LIBRARY} CXX)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC OFF)
 set(CMAKE_AUTORCC OFF)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Qt
 find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
 
@@ -76,19 +77,22 @@ QtColorWidgets/color_names.hpp
 qt5_add_resources(QRCS src/color_widgets.qrc)
 if(APPLE AND NOT ISCORE_STATIC_PLUGINS)
 add_library(${COLOR_WIDGETS_LIBRARY}
-    ${QRCS}
-    ${SOURCES}
-    ${HEADERS})
+	${QRCS}
+	${SOURCES}
+	${HEADERS})
 else()
 	add_library(${COLOR_WIDGETS_LIBRARY} STATIC
 		${QRCS}
 		${SOURCES}
 		${HEADERS})
 endif()
+
+generate_export_header(${COLOR_WIDGETS_LIBRARY})
+target_compile_definitions(${COLOR_WIDGETS_LIBRARY} PRIVATE QTCOLORWIDGETS_LIBRARY)
 target_link_libraries(${COLOR_WIDGETS_LIBRARY} PUBLIC Qt5::Widgets)
 target_include_directories(${COLOR_WIDGETS_LIBRARY}
-    PRIVATE "${PROJECT_SOURCE_DIR}/QtColorWidgets"
-    PUBLIC "${PROJECT_SOURCE_DIR}")
+	PRIVATE "${PROJECT_SOURCE_DIR}/QtColorWidgets"
+	PUBLIC "${PROJECT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")
 set_target_properties(${COLOR_WIDGETS_LIBRARY} PROPERTIES
 	CXX_STANDARD 14)
 if(EXAMPLES)
@@ -96,7 +100,7 @@ if(EXAMPLES)
 
   find_package(Qt5Designer QUIET)
   if(Qt5Designer_FOUND)
-    add_subdirectory(color_widgets_designer_plugin)
+	add_subdirectory(color_widgets_designer_plugin)
   endif()
 endif()
 
