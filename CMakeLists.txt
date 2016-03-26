@@ -75,17 +75,10 @@ QtColorWidgets/color_names.hpp
 # Library
 
 qt5_add_resources(QRCS src/color_widgets.qrc)
-if(APPLE AND NOT ISCORE_STATIC_PLUGINS)
-add_library(${COLOR_WIDGETS_LIBRARY}
+add_library(${COLOR_WIDGETS_LIBRARY} STATIC
 	${QRCS}
 	${SOURCES}
 	${HEADERS})
-else()
-	add_library(${COLOR_WIDGETS_LIBRARY} STATIC
-		${QRCS}
-		${SOURCES}
-		${HEADERS})
-endif()
 
 generate_export_header(${COLOR_WIDGETS_LIBRARY})
 target_compile_definitions(${COLOR_WIDGETS_LIBRARY} PRIVATE QTCOLORWIDGETS_LIBRARY)
