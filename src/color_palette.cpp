@@ -33,10 +33,10 @@ class ColorPalette::Private
 {
 public:
     QVector<QPair<QColor,QString> >   colors;
-    int             columns;
+    int             columns{};
     QString         name;
     QString         fileName;
-    bool            dirty;
+    bool            dirty{true};
 
     bool valid_index(int index)
     {
