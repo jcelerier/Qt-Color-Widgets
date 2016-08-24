@@ -39,25 +39,25 @@ SOURCES += \
     $$PWD/src/color_names.cpp
 
 HEADERS += \
-    $$PWD/include/color_wheel.hpp \
-    $$PWD/include/color_preview.hpp \
-    $$PWD/include/gradient_slider.hpp \
-    $$PWD/include/hue_slider.hpp \
-    $$PWD/include/color_dialog.hpp \
-    $$PWD/include/color_selector.hpp \
-    $$PWD/include/color_delegate.hpp \
-    $$PWD/include/color_list_widget.hpp \
-    $$PWD/include/bound_color_selector.hpp \
-    $$PWD/include/abstract_widget_list.hpp \
-    $$PWD/include/colorwidgets_global.hpp \
-    $$PWD/include/color_palette.hpp \
-    $$PWD/include/color_palette_model.hpp \
-    $$PWD/include/color_palette_widget.hpp \
-    $$PWD/include/swatch.hpp \
+    $$PWD/QtColorWidgets/color_wheel.hpp \
+    $$PWD/QtColorWidgets/color_preview.hpp \
+    $$PWD/QtColorWidgets/gradient_slider.hpp \
+    $$PWD/QtColorWidgets/hue_slider.hpp \
+    $$PWD/QtColorWidgets/color_dialog.hpp \
+    $$PWD/QtColorWidgets/color_selector.hpp \
+    $$PWD/QtColorWidgets/color_delegate.hpp \
+    $$PWD/QtColorWidgets/color_list_widget.hpp \
+    $$PWD/QtColorWidgets/bound_color_selector.hpp \
+    $$PWD/QtColorWidgets/abstract_widget_list.hpp \
+    $$PWD/QtColorWidgets/colorwidgets_global.hpp \
+    $$PWD/QtColorWidgets/color_palette.hpp \
+    $$PWD/QtColorWidgets/color_palette_model.hpp \
+    $$PWD/QtColorWidgets/color_palette_widget.hpp \
+    $$PWD/QtColorWidgets/swatch.hpp \
     $$PWD/src/color_utils.hpp \
-    $$PWD/include/color_2d_slider.hpp \
-    $$PWD/include/color_line_edit.hpp \
-    $$PWD/include/color_names.hpp
+    $$PWD/QtColorWidgets/color_2d_slider.hpp \
+    $$PWD/QtColorWidgets/color_line_edit.hpp \
+    $$PWD/QtColorWidgets/color_names.hpp
 
 FORMS += \
     $$PWD/src/color_dialog.ui \

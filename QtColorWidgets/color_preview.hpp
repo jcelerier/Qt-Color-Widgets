@@ -73,7 +73,7 @@ public:
     QSize sizeHint () const;
 
     void paint(QPainter &painter, QRect rect) const;
-    
+
 public slots:
     /// Set current color
     void setColor(const QColor &c);
@@ -101,4 +101,5 @@ private:
 
 } // namespace color_widgets
 
+Q_DECLARE_METATYPE(color_widgets::ColorPreview::DisplayMode)
 #endif // COLOR_PREVIEW_HPP
