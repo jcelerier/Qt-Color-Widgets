@@ -28,8 +28,6 @@
 
 namespace color_widgets {
 
-static const double selector_radius = 6;
-
 class Color2DSlider::Private
 {
 public:
@@ -233,7 +231,7 @@ void Color2DSlider::paintEvent(QPaintEvent*)
 
     painter.setPen(QPen(p->val > 0.5 ? Qt::black : Qt::white, 3));
     painter.setBrush(Qt::NoBrush);
-    painter.drawEllipse(p->selectorPos(size()), selector_radius, selector_radius);
+    painter.drawEllipse(p->selectorPos(size()), color_widgets::detail::selector_radius, color_widgets::detail::selector_radius);
 }
 
 void Color2DSlider::mousePressEvent(QMouseEvent* event)

@@ -40,7 +40,6 @@ enum MouseStatus
 
 static const ColorWheel::DisplayFlags hard_default_flags = ColorWheel::SHAPE_TRIANGLE|ColorWheel::ANGLE_ROTATING|ColorWheel::COLOR_HSV;
 static ColorWheel::DisplayFlags default_flags = hard_default_flags;
-static const double selector_radius = 6;
 
 class ColorWheel::Private
 {
@@ -353,7 +352,7 @@ void ColorWheel::paintEvent(QPaintEvent * )
     // lum-sat selector
     painter.setPen(QPen(p->val > 0.5 ? Qt::black : Qt::white, 3));
     painter.setBrush(Qt::NoBrush);
-    painter.drawEllipse(selector_position, selector_radius, selector_radius);
+    painter.drawEllipse(selector_position, color_widgets::detail::selector_radius, color_widgets::detail::selector_radius);
 
 }
 

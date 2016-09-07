@@ -19,6 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#pragma once
 #include <QColor>
 #include <qmath.h>
 
@@ -66,5 +67,6 @@ inline qreal color_HSL_saturationF(const QColor& col)
 
 QColor color_from_hsl(qreal hue, qreal sat, qreal lig, qreal alpha = 1 );
 
+const double selector_radius = 6;
 } // namespace detail
 } // namespace color_widgets
