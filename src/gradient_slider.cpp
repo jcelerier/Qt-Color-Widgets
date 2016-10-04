@@ -21,20 +21,11 @@
  *
  */
 #include "gradient_slider.hpp"
+#include "color_utils.hpp"
 
 #include <QPainter>
 #include <QStyleOptionSlider>
 #include <QLinearGradient>
-
-static void loadResource()
-{
-    static bool loaded = false;
-    if ( !loaded )
-    {
-        Q_INIT_RESOURCE(color_widgets);
-        loaded = true;
-    }
-}
 
 namespace color_widgets {
 
@@ -51,8 +42,7 @@ public:
         verticalSpacing(0),
         border(Qt::NoPen)
     {
-        loadResource();
-        back.setTexture(QPixmap(QLatin1String(":/color_widgets/alphaback.png")));
+        back.setTexture(detail::alpha_pixmap());
         gradient.setCoordinateMode(QGradient::StretchToDeviceMode);
     }
 

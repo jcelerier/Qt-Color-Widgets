@@ -74,9 +74,7 @@ QtColorWidgets/color_names.hpp
 
 # Library
 
-qt5_add_resources(QRCS src/color_widgets.qrc)
 add_library(${COLOR_WIDGETS_LIBRARY} STATIC
-  ${QRCS}
   ${SOURCES}
   ${HEADERS})
 

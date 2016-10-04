@@ -20,7 +20,7 @@
  *
  */
 #include "swatch.hpp"
-
+#include "color_utils.hpp"
 #include <cmath>
 #include <QPainter>
 #include <QMouseEvent>
@@ -338,7 +338,7 @@ void Swatch::paintEvent(QPaintEvent* event)
         return;
 
     QSizeF color_size = p->actualColorSize(rowcols);
-    QPixmap alpha_pattern(":/color_widgets/alphaback.png");
+    QPixmap alpha_pattern(detail::alpha_pixmap());
     QPen penEmptyBorder = p->border;
     QColor colorEmptyBorder = p->border.color();
     colorEmptyBorder.setAlpha(56);

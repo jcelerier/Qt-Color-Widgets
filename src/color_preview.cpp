@@ -21,6 +21,7 @@
  *
  */
 #include "color_preview.hpp"
+#include "color_utils.hpp"
 
 #include <QStylePainter>
 #include <QStyleOptionFrame>
@@ -45,7 +46,7 @@ public:
 ColorPreview::ColorPreview(QWidget *parent) :
     QWidget(parent), p(new Private)
 {
-    p->back.setTexture(QPixmap(QLatin1String(":/color_widgets/alphaback.png")));
+    p->back.setTexture(detail::alpha_pixmap());
 }
 
 ColorPreview::~ColorPreview()

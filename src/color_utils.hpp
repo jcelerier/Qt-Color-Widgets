@@ -21,6 +21,7 @@
  */
 #pragma once
 #include <QColor>
+#include <QPixmap>
 #include <qmath.h>
 
 namespace color_widgets {
@@ -66,6 +67,8 @@ inline qreal color_HSL_saturationF(const QColor& col)
 }
 
 QColor color_from_hsl(qreal hue, qreal sat, qreal lig, qreal alpha = 1 );
+
+QPixmap alpha_pixmap();
 
 const double selector_radius = 6;
 } // namespace detail

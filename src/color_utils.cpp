@@ -21,6 +21,8 @@
  */
 #include "color_utils.hpp"
 #include <cmath>
+#include <QImage>
+#include <QPainter>
 
 namespace color_widgets {
 namespace detail {
@@ -77,7 +79,20 @@ QColor color_from_hsl(qreal hue, qreal sat, qreal lig, qreal alpha )
         qBound(0.0,col.redF()+m,1.0),
         qBound(0.0,col.greenF()+m,1.0),
         qBound(0.0,col.blueF()+m,1.0),
-        alpha);
+                alpha);
+}
+
+QPixmap alpha_pixmap()
+{
+    QImage im(32, 32, QImage::Format_ARGB32);
+    {
+        QPainter p{&im};
+        p.fillRect(0, 0, 16, 16, Qt::lightGray);
+        p.fillRect(16, 0, 16, 16, Qt::darkGray);
+        p.fillRect(0, 16, 16, 16, Qt::darkGray);
+        p.fillRect(16,16, 16, 16, Qt::lightGray);
+    }
+    return QPixmap::fromImage(im);
 }
 
 } // namespace detail
