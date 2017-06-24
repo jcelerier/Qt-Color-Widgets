@@ -377,7 +377,7 @@ bool ColorPaletteWidget::setCurrentColor(int index)
 
 void ColorPaletteWidget::on_palette_list_currentIndexChanged(int index)
 {
-    if ( !p->model )
+    if ( !p->model || index == -1)
         p->swatch->setPalette(ColorPalette());
     else
         p->swatch->setPalette(p->model->palette(index));
