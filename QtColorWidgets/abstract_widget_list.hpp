@@ -52,7 +52,7 @@ public:
 	void setRowHeight(int row, int height);
 
 
-public slots:
+public Q_SLOTS:
 	/**
 	 *  \brief Remove row i
 	 */
@@ -94,7 +94,7 @@ protected:
 	 */
 	void clear();
 
-private slots:
+private Q_SLOTS:
 	void remove_clicked(QWidget* w);
 	void up_clicked(QWidget* w);
 	void down_clicked(QWidget* w);

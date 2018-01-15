@@ -118,7 +118,7 @@ public:
 
     int currentRow() const;
 
-public slots:
+public Q_SLOTS:
     void setModel(ColorPaletteModel* model);
     void setColorSize(const QSize& colorSize);
     void setColorSizePolicy(Swatch::ColorSizePolicy colorSizePolicy);
@@ -168,7 +168,7 @@ signals:
     void borderChanged(const QPen& border);
     void currentRowChanged(int currentRow);
 
-private slots:
+private Q_SLOTS:
     void on_palette_list_currentIndexChanged(int index);
     void on_swatch_doubleClicked(int index);
 

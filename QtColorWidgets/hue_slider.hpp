@@ -68,7 +68,7 @@ public:
     QColor color() const;
     qreal colorHue() const;
 
-public slots:
+public Q_SLOTS:
     void setColorValue(qreal value);
     void setColorSaturation(qreal value);
     void setColorAlpha(qreal alpha);

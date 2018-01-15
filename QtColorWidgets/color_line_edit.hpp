@@ -62,7 +62,7 @@ public:
     bool showAlpha() const;
     bool previewColor() const;
 
-public slots:
+public Q_SLOTS:
     void setColor(const QColor& color);
     void setShowAlpha(bool showAlpha);
     void setPreviewColor(bool previewColor);

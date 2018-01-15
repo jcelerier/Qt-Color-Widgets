@@ -109,7 +109,7 @@ public:
      */
     void setDisplayFlag(DisplayFlags flag, DisplayFlags mask);
 
-public slots:
+public Q_SLOTS:
 
     /// Set current color
     void setColor(QColor c);

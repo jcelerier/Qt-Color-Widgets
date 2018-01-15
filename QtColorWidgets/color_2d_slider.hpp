@@ -74,7 +74,7 @@ public:
     Component componentX() const;
     Component componentY() const;
 
-public slots:
+public Q_SLOTS:
 
     /// Set current color
     void setColor(const QColor& c);
