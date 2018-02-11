@@ -125,7 +125,7 @@ public Q_SLOTS:
      */
     void load();
 
-signals:
+Q_SIGNALS:
     void savePathChanged(const QString& savePath);
     void searchPathsChanged(const QStringList& searchPaths);
     void iconSizeChanged(const QSize& iconSize);

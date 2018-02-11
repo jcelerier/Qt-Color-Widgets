@@ -106,7 +106,7 @@ public Q_SLOTS:
      */
     void setAlphaEnabled(bool a);
 
-signals:
+Q_SIGNALS:
     /**
      * The current color was changed
      */

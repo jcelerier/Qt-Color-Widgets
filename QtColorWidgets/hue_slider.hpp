@@ -82,7 +82,7 @@ public Q_SLOTS:
      */
     void setFullColor(const QColor& color);
 
-signals:
+Q_SIGNALS:
     void colorHueChanged(qreal colorHue);
 
 private:

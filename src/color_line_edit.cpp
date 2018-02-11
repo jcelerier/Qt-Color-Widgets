@@ -73,7 +73,7 @@ ColorLineEdit::ColorLineEdit(QWidget* parent)
     /*connect(this, &QLineEdit::textChanged, [this](const QString& text){
         QColor color = p->colorFromString(text);
         if ( color.isValid() )
-            emit colorChanged(color);
+            colorChanged(color);
     });*/
     connect(this, &QLineEdit::textEdited, [this](const QString& text){
         QColor color = color_widgets::colorFromString(text, p->show_alpha);
@@ -81,8 +81,8 @@ ColorLineEdit::ColorLineEdit(QWidget* parent)
         {
             p->color = color;
             p->setPalette(color, this);
-            emit colorEdited(color);
-            emit colorChanged(color);
+            colorEdited(color);
+            colorChanged(color);
         }
     });
     connect(this, &QLineEdit::editingFinished, [this](){
@@ -90,14 +90,14 @@ ColorLineEdit::ColorLineEdit(QWidget* parent)
         if ( color.isValid() )
         {
             p->color = color;
-            emit colorEditingFinished(color);
-            emit colorChanged(color);
+            colorEditingFinished(color);
+            colorChanged(color);
         }
         else
         {
             setText(color_widgets::stringFromColor(p->color, p->show_alpha));
-            emit colorEditingFinished(p->color);
-            emit colorChanged(color);
+            colorEditingFinished(p->color);
+            colorChanged(color);
         }
         p->setPalette(p->color, this);
     });
@@ -120,7 +120,7 @@ void ColorLineEdit::setColor(const QColor& color)
         p->color = color;
         p->setPalette(p->color, this);
         setText(color_widgets::stringFromColor(p->color, p->show_alpha));
-        emit colorChanged(p->color);
+        colorChanged(p->color);
     }
 }
 
@@ -131,7 +131,7 @@ void ColorLineEdit::setShowAlpha(bool showAlpha)
         p->show_alpha = showAlpha;
         p->setPalette(p->color, this);
         setText(color_widgets::stringFromColor(p->color, p->show_alpha));
-        emit showAlphaChanged(p->show_alpha);
+        showAlphaChanged(p->show_alpha);
     }
 }
 
@@ -158,7 +158,7 @@ void ColorLineEdit::dropEvent(QDropEvent *event)
 {
     if ( isReadOnly() )
         return;
-    
+
     if ( event->mimeData()->hasColor() )
     {
         setColor(event->mimeData()->colorData().value<QColor>());
@@ -191,7 +191,7 @@ void ColorLineEdit::setPreviewColor(bool previewColor)
         else
             setPalette(QApplication::palette());
 
-        emit previewColorChanged(p->preview_color);
+        previewColorChanged(p->preview_color);
     }
 }
 

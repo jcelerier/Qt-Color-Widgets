@@ -183,7 +183,7 @@ public Q_SLOTS:
     void setFileName(const QString& name);
     void setDirty(bool dirty);
 
-signals:
+Q_SIGNALS:
     /**
      * \brief Emitted when all the colors have changed
      */

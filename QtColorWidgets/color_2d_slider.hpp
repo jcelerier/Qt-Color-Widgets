@@ -97,7 +97,7 @@ public Q_SLOTS:
     void setComponentX(Component componentX);
     void setComponentY(Component componentY);
 
-signals:
+Q_SIGNALS:
     /**
      * Emitted when the user selects a color or setColor is called
      */

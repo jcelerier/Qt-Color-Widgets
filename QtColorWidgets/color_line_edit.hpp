@@ -67,7 +67,7 @@ public Q_SLOTS:
     void setShowAlpha(bool showAlpha);
     void setPreviewColor(bool previewColor);
 
-signals:
+Q_SIGNALS:
     /**
      * \brief Emitted when the color is changed by any means
      */

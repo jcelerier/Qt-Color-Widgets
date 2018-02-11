@@ -133,7 +133,7 @@ void ColorPreview::setColor(const QColor &c)
 {
     p->col = c;
     update();
-    emit colorChanged(c);
+    colorChanged(c);
 }
 
 void ColorPreview::setComparisonColor(const QColor &c)
@@ -157,7 +157,7 @@ void ColorPreview::resizeEvent(QResizeEvent *)
 void ColorPreview::mouseReleaseEvent(QMouseEvent * ev)
 {
     if ( QRect(QPoint(0,0),size()).contains(ev->pos()) )
-        emit clicked();
+        clicked();
 }
 
 void ColorPreview::mouseMoveEvent(QMouseEvent *ev)

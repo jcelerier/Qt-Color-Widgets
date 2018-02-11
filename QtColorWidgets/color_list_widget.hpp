@@ -47,7 +47,7 @@ public:
 
     ColorWheel::DisplayFlags wheelFlags() const;
 
-signals:
+Q_SIGNALS:
     void colorsChanged(const QList<QColor>&);
     void wheelFlagsChanged(ColorWheel::DisplayFlags flags);
 

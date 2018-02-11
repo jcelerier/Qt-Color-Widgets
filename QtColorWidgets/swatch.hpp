@@ -168,7 +168,7 @@ public Q_SLOTS:
      **/
     void removeSelected();
 
-signals:
+Q_SIGNALS:
     void paletteChanged(const ColorPalette& palette);
     void selectedChanged(int selected);
     void colorSelected(const QColor& color);

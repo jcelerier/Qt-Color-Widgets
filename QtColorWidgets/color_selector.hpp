@@ -55,7 +55,7 @@ public:
 
     ColorWheel::DisplayFlags wheelFlags() const;
 
-signals:
+Q_SIGNALS:
     void wheelFlagsChanged(ColorWheel::DisplayFlags flags);
 
 public Q_SLOTS:

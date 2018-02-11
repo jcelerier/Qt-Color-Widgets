@@ -81,7 +81,7 @@ public Q_SLOTS:
     /// Set the comparison color
     void setComparisonColor(const QColor &c);
 
-signals:
+Q_SIGNALS:
     /// Emitted when the user clicks on the widget
     void clicked();
 

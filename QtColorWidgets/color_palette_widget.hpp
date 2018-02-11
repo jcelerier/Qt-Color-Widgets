@@ -156,7 +156,7 @@ public Q_SLOTS:
      */
     void setCurrentRow(int currentRow);
 
-signals:
+Q_SIGNALS:
     void modelChanged(ColorPaletteModel* model);
     void colorSizeChanged(const QSize& colorSize);
     void colorSizePolicyChanged(Swatch::ColorSizePolicy colorSizePolicy);

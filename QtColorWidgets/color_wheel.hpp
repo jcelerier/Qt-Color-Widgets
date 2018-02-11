@@ -135,7 +135,7 @@ public Q_SLOTS:
      */
     void setDisplayFlags(ColorWheel::DisplayFlags flags);
 
-signals:
+Q_SIGNALS:
     /**
      * Emitted when the user selects a color or setColor is called
      */

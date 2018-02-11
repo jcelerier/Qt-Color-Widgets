@@ -223,7 +223,7 @@ Swatch::Swatch(QWidget* parent)
     connect(&p->palette, &ColorPalette::colorsUpdated, this, (void(QWidget::*)())&QWidget::update);
     connect(&p->palette, &ColorPalette::colorChanged, [this](int index){
         if ( index == p->selected )
-            emit colorSelected( p->palette.colorAt(index) );
+            colorSelected( p->palette.colorAt(index) );
     });
     connect(&p->palette, &ColorPalette::colorRemoved, [this](int index){
         if ( index == p->selected )
@@ -309,7 +309,7 @@ void Swatch::setPalette(const ColorPalette& palette)
     clearSelection();
     p->palette = palette;
     update();
-    emit paletteChanged(p->palette);
+    paletteChanged(p->palette);
 }
 
 void Swatch::setSelected(int selected)
@@ -319,9 +319,9 @@ void Swatch::setSelected(int selected)
 
     if ( selected != p->selected )
     {
-        emit selectedChanged( p->selected = selected );
+        selectedChanged( p->selected = selected );
         if ( selected != -1 )
-            emit colorSelected( p->palette.colorAt(p->selected) );
+            colorSelected( p->palette.colorAt(p->selected) );
         update();
     }
 }
@@ -535,7 +535,7 @@ void Swatch::mousePressEvent(QMouseEvent *event)
     {
         int index = indexAt(event->pos());
         if ( index != -1 )
-            emit rightClicked(index);
+            rightClicked(index);
     }
 }
 
@@ -577,7 +577,7 @@ void Swatch::mouseDoubleClickEvent(QMouseEvent *event)
     {
         int index = indexAt(event->pos());
         if ( index != -1 )
-            emit doubleClicked(index);
+            doubleClicked(index);
     }
 }
 
@@ -697,7 +697,7 @@ QSize Swatch::colorSize() const
 void Swatch::setColorSize(const QSize& colorSize)
 {
     if ( p->color_size != colorSize )
-        emit colorSizeChanged(p->color_size = colorSize);
+        colorSizeChanged(p->color_size = colorSize);
 }
 
 Swatch::ColorSizePolicy Swatch::colorSizePolicy() const
@@ -712,7 +712,7 @@ void Swatch::setColorSizePolicy(ColorSizePolicy colorSizePolicy)
         setMinimumSize(0,0);
         setFixedSize(QWIDGETSIZE_MAX,QWIDGETSIZE_MAX);
         paletteModified();
-        emit colorSizePolicyChanged(p->size_policy = colorSizePolicy);
+        colorSizePolicyChanged(p->size_policy = colorSizePolicy);
     }
 }
 
@@ -733,8 +733,8 @@ void Swatch::setForcedColumns(int forcedColumns)
 
     if ( forcedColumns != p->forced_columns )
     {
-        emit forcedColumnsChanged(p->forced_columns = forcedColumns);
-        emit forcedRowsChanged(p->forced_rows = 0);
+        forcedColumnsChanged(p->forced_columns = forcedColumns);
+        forcedRowsChanged(p->forced_rows = 0);
     }
 }
 
@@ -745,8 +745,8 @@ void Swatch::setForcedRows(int forcedRows)
 
     if ( forcedRows != p->forced_rows )
     {
-        emit forcedColumnsChanged(p->forced_columns = 0);
-        emit forcedRowsChanged(p->forced_rows = forcedRows);
+        forcedColumnsChanged(p->forced_columns = 0);
+        forcedRowsChanged(p->forced_rows = forcedRows);
     }
 }
 
@@ -759,7 +759,7 @@ void Swatch::setReadOnly(bool readOnly)
 {
     if ( readOnly != p->readonly )
     {
-        emit readOnlyChanged(p->readonly = readOnly);
+        readOnlyChanged(p->readonly = readOnly);
         setAcceptDrops(!p->readonly);
     }
 }
@@ -803,7 +803,7 @@ void Swatch::setBorder(const QPen& border)
     if ( border != p->border )
     {
         p->border = border;
-        emit borderChanged(border);
+        borderChanged(border);
         update();
     }
 }
@@ -818,7 +818,7 @@ void Swatch::setMargin(const int& margin)
     if ( margin != p->margin )
     {
         p->margin = margin;
-        emit marginChanged(margin);
+        marginChanged(margin);
         update();
     }
 }
@@ -833,7 +833,7 @@ void Swatch::setSelection(const QPen& selection)
     if ( selection != p->selection )
     {
         p->selection = selection;
-        emit selectionChanged(selection);
+        selectionChanged(selection);
         update();
     }
 }
@@ -848,7 +848,7 @@ void Swatch::setEmptyColor(const QColor& emptyColor)
     if ( emptyColor != p->emptyColor )
     {
         p->emptyColor = emptyColor;
-        emit emptyColorChanged(emptyColor);
+        emptyColorChanged(emptyColor);
         update();
     }
 }
