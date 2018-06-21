@@ -26,7 +26,8 @@
 #include <QPainter>
 #include <QStyleOptionSlider>
 #include <QLinearGradient>
-
+#include <wobjectimpl.h>
+W_OBJECT_IMPL(color_widgets::GradientSlider)
 namespace color_widgets {
 
 class GradientSlider::Private
@@ -115,23 +116,6 @@ void GradientSlider::setGradient(const QLinearGradient &gradient)
 {
     p->gradient = gradient;
     update();
-}
-
-void GradientSlider::setColors(const QVector<QColor> &colors)
-{
-    QGradientStops stops;
-    stops.reserve(colors.size());
-
-    double c = colors.size() - 1;
-    if(c==0) {
-        stops.append(QGradientStop(0, colors.at(0)));
-
-    } else {
-        for(int i=0;i<colors.size();++i) {
-            stops.append(QGradientStop(i/c, colors.at(i)));
-        }
-    }
-    setColors(stops);
 }
 
 void GradientSlider::setFirstColor(const QColor &c)

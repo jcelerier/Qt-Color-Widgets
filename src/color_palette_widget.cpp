@@ -26,7 +26,9 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QImageReader>
+#include <wobjectimpl.h>
 
+W_OBJECT_IMPL(color_widgets::ColorPaletteWidget)
 namespace color_widgets {
 
 class ColorPaletteWidget::Private : public Ui::ColorPaletteWidget
@@ -344,36 +346,6 @@ bool ColorPaletteWidget::setCurrentColor(const QColor& color)
     p->swatch->clearSelection();
     return false;
 }
-
-bool ColorPaletteWidget::setCurrentColor(const QString& name)
-{
-    const auto& palette = p->swatch->palette();
-    for ( int i = 0; i < palette.count(); i++ )
-    {
-        if ( palette.nameAt(i) == name )
-        {
-            p->swatch->setSelected(i);
-            return true;
-        }
-    }
-
-    p->swatch->clearSelection();
-    return false;
-}
-
-bool ColorPaletteWidget::setCurrentColor(int index)
-{
-    const auto& palette = p->swatch->palette();
-    if ( index >= 0 && index < palette.count() )
-    {
-        p->swatch->setSelected(index);
-        return true;
-    }
-
-    p->swatch->clearSelection();
-    return false;
-}
-
 
 void ColorPaletteWidget::on_palette_list_currentIndexChanged(int index)
 {

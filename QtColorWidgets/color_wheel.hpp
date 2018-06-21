@@ -25,7 +25,7 @@
 #include "colorwidgets_global.hpp"
 
 #include <QWidget>
-
+#include <wobjectdefs.h>
 namespace color_widgets {
 
 /**
@@ -36,14 +36,7 @@ namespace color_widgets {
  */
 class QCP_EXPORT ColorWheel : public QWidget
 {
-    Q_OBJECT
-
-    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged DESIGNABLE true STORED false )
-    Q_PROPERTY(qreal hue READ hue WRITE setHue DESIGNABLE false )
-    Q_PROPERTY(qreal saturation READ saturation WRITE setSaturation DESIGNABLE false )
-    Q_PROPERTY(qreal value READ value WRITE setValue DESIGNABLE false )
-    Q_PROPERTY(unsigned wheelWidth READ wheelWidth WRITE setWheelWidth DESIGNABLE true )
-    Q_PROPERTY(DisplayFlags displayFlags READ displayFlags WRITE setDisplayFlags NOTIFY displayFlagsChanged DESIGNABLE true )
+    W_OBJECT(ColorWheel)
 
 public:
     enum DisplayEnum
@@ -68,7 +61,11 @@ public:
         FLAGS_ALL      = 0xfff  ///< Mask matching all flags
     };
     Q_DECLARE_FLAGS(DisplayFlags, DisplayEnum)
-    Q_FLAGS(DisplayFlags)
+    W_FLAG(DisplayFlags
+           , SHAPE_DEFAULT, SHAPE_TRIANGLE, SHAPE_SQUARE, SHAPE_FLAGS
+           , ANGLE_DEFAULT, ANGLE_FIXED, ANGLE_ROTATING, ANGLE_FLAGS
+           , COLOR_DEFAULT, COLOR_HSV, COLOR_HSL, COLOR_LCH, COLOR_FLAGS
+           , FLAGS_DEFAULT, FLAGS_ALL)
 
     explicit ColorWheel(QWidget *parent = 0);
     ~ColorWheel();
@@ -109,44 +106,50 @@ public:
      */
     void setDisplayFlag(DisplayFlags flag, DisplayFlags mask);
 
-public Q_SLOTS:
 
     /// Set current color
-    void setColor(QColor c);
+    void setColor(QColor c); W_SLOT(setColor)
 
     /**
      * @param h Hue [0-1]
      */
-    void setHue(qreal h);
+    void setHue(qreal h); W_SLOT(setHue)
 
     /**
      * @param s Saturation [0-1]
      */
-    void setSaturation(qreal s);
+    void setSaturation(qreal s); W_SLOT(setSaturation)
 
     /**
      * @param v Value [0-1]
      */
-    void setValue(qreal v);
+    void setValue(qreal v); W_SLOT(setValue)
 
     /**
      * @brief Set the display flags
      * @param flags which will replace the current ones
      */
-    void setDisplayFlags(ColorWheel::DisplayFlags flags);
+    void setDisplayFlags(ColorWheel::DisplayFlags flags); W_SLOT(setDisplayFlags)
 
-Q_SIGNALS:
     /**
      * Emitted when the user selects a color or setColor is called
      */
-    void colorChanged(QColor);
+    void colorChanged(QColor c) W_SIGNAL(colorChanged, c);
 
     /**
      * Emitted when the user selects a color
      */
-    void colorSelected(QColor);
+    void colorSelected(QColor c) W_SIGNAL(colorSelected, c);
 
-    void displayFlagsChanged(ColorWheel::DisplayFlags flags);
+    void displayFlagsChanged(ColorWheel::DisplayFlags flags) W_SIGNAL(displayFlagsChanged, flags);
+
+    W_PROPERTY(QColor, color READ color WRITE setColor NOTIFY colorChanged  )
+    W_PROPERTY(qreal, hue READ hue WRITE setHue  )
+    W_PROPERTY(qreal, saturation READ saturation WRITE setSaturation  )
+    W_PROPERTY(qreal, value READ value WRITE setValue )
+    W_PROPERTY(unsigned, wheelWidth READ wheelWidth WRITE setWheelWidth )
+    //W_PROPERTY(DisplayFlags, displayFlags READ displayFlags WRITE setDisplayFlags NOTIFY displayFlagsChanged  )
+
 
 protected:
     void paintEvent(QPaintEvent *) Q_DECL_OVERRIDE;
@@ -163,7 +166,7 @@ private:
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ColorWheel::DisplayFlags)
-
 } // namespace color_widgets
 
+W_REGISTER_ARGTYPE(color_widgets::ColorWheel::DisplayFlags)
 #endif // COLOR_WHEEL_HPP

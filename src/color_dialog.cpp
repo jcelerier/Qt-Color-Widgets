@@ -31,6 +31,8 @@
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 #include <QScreen>
 #endif
+#include <wobjectimpl.h>
+W_OBJECT_IMPL(color_widgets::ColorDialog)
 namespace color_widgets {
 
 class ColorDialog::Private

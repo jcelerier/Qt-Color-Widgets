@@ -29,22 +29,7 @@ namespace color_widgets {
 
 class ColorPaletteModel final : public QAbstractListModel
 {
-    Q_OBJECT
-    /**
-     * \brief List of directories to be scanned for palette files
-     */
-    Q_PROPERTY(QStringList searchPaths READ searchPaths WRITE setSearchPaths NOTIFY searchPathsChanged)
-
-    /**
-     * \brief Default directory to be used when saving a palette
-     */
-    Q_PROPERTY(QString savePath READ savePath WRITE setSavePath NOTIFY savePathChanged)
-
-    /**
-     * \brief Size of the icon used for the palette previews
-     */
-    Q_PROPERTY(QSize iconSize READ iconSize WRITE setIconSize NOTIFY iconSizeChanged)
-
+    W_OBJECT(ColorPaletteModel)
 
 public:
     ColorPaletteModel();
@@ -114,22 +99,34 @@ public:
      */
     int indexFromFile(const QString& filename) const;
 
-public Q_SLOTS:
-    void setSavePath(const QString& savePath);
-    void setSearchPaths(const QStringList& searchPaths);
-    void addSearchPath(const QString& path);
-    void setIconSize(const QSize& iconSize);
+    void setSavePath(const QString& savePath); W_SLOT(setSavePath)
+    void setSearchPaths(const QStringList& searchPaths); W_SLOT(setSearchPaths)
+    void addSearchPath(const QString& path); W_SLOT(addSearchPath)
+    void setIconSize(const QSize& iconSize); W_SLOT(setIconSize)
 
     /**
      * \brief Load palettes files found in the search paths
      */
     void load();
 
-Q_SIGNALS:
-    void savePathChanged(const QString& savePath);
-    void searchPathsChanged(const QStringList& searchPaths);
-    void iconSizeChanged(const QSize& iconSize);
+    void savePathChanged(const QString& savePath) W_SIGNAL(savePathChanged, savePath);
+    void searchPathsChanged(const QStringList& searchPaths) W_SIGNAL(searchPathsChanged, searchPaths);
+    void iconSizeChanged(const QSize& iconSize) W_SIGNAL(iconSizeChanged, iconSize);
 
+    /**
+     * \brief List of directories to be scanned for palette files
+     */
+    W_PROPERTY(QStringList, searchPaths READ searchPaths WRITE setSearchPaths NOTIFY searchPathsChanged)
+
+    /**
+     * \brief Default directory to be used when saving a palette
+     */
+    W_PROPERTY(QString, savePath READ savePath WRITE setSavePath NOTIFY savePathChanged)
+
+    /**
+     * \brief Size of the icon used for the palette previews
+     */
+    W_PROPERTY(QSize, iconSize READ iconSize WRITE setIconSize NOTIFY iconSizeChanged)
 private:
     class Private;
     Private* p;
@@ -137,4 +134,5 @@ private:
 
 } // namespace color_widgets
 
+W_REGISTER_ARGTYPE(color_widgets::ColorPaletteModel*)
 #endif // COLOR_WIDGETS_COLOR_PALETTE_MODEL_HPP

@@ -23,7 +23,8 @@
 #include <QDir>
 #include <QList>
 #include <QRegularExpression>
-
+#include <wobjectimpl.h>
+W_OBJECT_IMPL(color_widgets::ColorPaletteModel)
 namespace color_widgets {
 
 class ColorPaletteModel::Private

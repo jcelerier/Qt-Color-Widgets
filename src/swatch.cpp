@@ -32,6 +32,9 @@
 #include <QDragEnterEvent>
 #include <QStyleOption>
 #include <QToolTip>
+#include <wobjectimpl.h>
+
+W_OBJECT_IMPL(color_widgets::Swatch)
 
 namespace color_widgets {
 
@@ -113,7 +116,7 @@ public:
         if ( event->mimeData()->hasColor() )
         {
             drop_color = event->mimeData()->colorData().value<QColor>();
-            
+
         }
         else if ( event->mimeData()->hasText() )
         {
@@ -132,7 +135,7 @@ public:
                     drop_index++;
                 // Dragged to the middle of the square, overwrite existing color
                 else if ( event->posF().x() > drop_rect.top() + drop_rect.height() / 4 &&
-                        ( event->dropAction() != Qt::MoveAction || event->source() != owner || 
+                        ( event->dropAction() != Qt::MoveAction || event->source() != owner ||
                           palette.colorAt(drop_index) == emptyColor ) )
                     drop_overwrite = true;
             }
@@ -143,7 +146,7 @@ public:
                     drop_index++;
                 // Dragged to the middle of the square, overwrite existing color
                 else if ( event->posF().x() > drop_rect.left() + drop_rect.width() / 4 &&
-                        ( event->dropAction() != Qt::MoveAction || event->source() != owner || 
+                        ( event->dropAction() != Qt::MoveAction || event->source() != owner ||
                           palette.colorAt(drop_index) == emptyColor ) )
                     drop_overwrite = true;
             }

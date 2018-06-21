@@ -26,6 +26,7 @@
 #include "colorwidgets_global.hpp"
 
 #include <QWidget>
+#include <wobjectdefs.h>
 
 namespace color_widgets {
 
@@ -34,12 +35,8 @@ namespace color_widgets {
  */
 class QCP_EXPORT ColorPreview : public QWidget
 {
-    Q_OBJECT
-    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged DESIGNABLE true)
-    Q_PROPERTY(QColor comparisonColor READ comparisonColor WRITE setComparisonColor DESIGNABLE true)
-    Q_PROPERTY(DisplayMode display_mode READ displayMode WRITE setDisplayMode DESIGNABLE true)
-    Q_PROPERTY(QBrush background READ background WRITE setBackground DESIGNABLE true)
-    Q_ENUMS(DisplayMode)
+    W_OBJECT(ColorPreview)
+
 public:
     enum DisplayMode
     {
@@ -48,6 +45,7 @@ public:
         SplitAlpha, ///< Show both solid and transparent side by side
         SplitColor  ///< Show current and comparison colors side by side
     };
+    W_ENUM(DisplayMode, NoAlpha, AllAlpha, SplitAlpha, SplitColor)
 
     explicit ColorPreview(QWidget *parent = 0);
     ~ColorPreview();
@@ -70,29 +68,31 @@ public:
     /// Get the comparison color
     QColor comparisonColor() const;
 
-    QSize sizeHint () const;
+    QSize sizeHint () const override;
 
     void paint(QPainter &painter, QRect rect) const;
 
-public Q_SLOTS:
     /// Set current color
-    void setColor(const QColor &c);
+    void setColor(const QColor &c); W_SLOT(setColor)
 
     /// Set the comparison color
-    void setComparisonColor(const QColor &c);
+    void setComparisonColor(const QColor &c); W_SLOT(setComparisonColor)
 
-Q_SIGNALS:
     /// Emitted when the user clicks on the widget
-    void clicked();
+    void clicked() W_SIGNAL(clicked);
 
     /// Emitted on setColor
-    void colorChanged(QColor);
+    void colorChanged(QColor c) W_SIGNAL(colorChanged, c);
 
+    W_PROPERTY(QColor, color READ color WRITE setColor NOTIFY colorChanged)
+    W_PROPERTY(QColor, comparisonColor READ comparisonColor WRITE setComparisonColor)
+    W_PROPERTY(DisplayMode, display_mode READ displayMode WRITE setDisplayMode)
+    W_PROPERTY(QBrush, background READ background WRITE setBackground)
 protected:
-    void paintEvent(QPaintEvent *);
-    void resizeEvent(QResizeEvent *);
-    void mouseReleaseEvent(QMouseEvent *ev);
-    void mouseMoveEvent(QMouseEvent *ev);
+    void paintEvent(QPaintEvent *)  override;
+    void resizeEvent(QResizeEvent *)  override;
+    void mouseReleaseEvent(QMouseEvent *ev)  override;
+    void mouseMoveEvent(QMouseEvent *ev)  override;
 
 private:
     class Private;

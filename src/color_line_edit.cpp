@@ -31,6 +31,8 @@
 #include "color_utils.hpp"
 #include "color_names.hpp"
 
+#include <wobjectimpl.h>
+W_OBJECT_IMPL(color_widgets::ColorLineEdit)
 namespace color_widgets {
 
 

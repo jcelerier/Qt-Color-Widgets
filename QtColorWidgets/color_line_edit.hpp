@@ -25,6 +25,7 @@
 #include "colorwidgets_global.hpp"
 #include <QLineEdit>
 #include <QColor>
+#include <wobjectdefs.h>
 
 namespace color_widgets {
 
@@ -43,16 +44,7 @@ namespace color_widgets {
  */
 class QCP_EXPORT ColorLineEdit : public QLineEdit
 {
-    Q_OBJECT
-    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged)
-    /**
-     * \brief Whether the widget displays and edits the alpha channel
-     */
-    Q_PROPERTY(bool showAlpha READ showAlpha WRITE setShowAlpha NOTIFY showAlphaChanged)
-    /**
-     * \brief If \b true, the background of the widget is changed to show the color
-     */
-    Q_PROPERTY(bool previewColor READ previewColor WRITE setPreviewColor NOTIFY previewColorChanged)
+    W_OBJECT(ColorLineEdit)
 
 public:
     explicit ColorLineEdit(QWidget* parent = nullptr);
@@ -62,27 +54,35 @@ public:
     bool showAlpha() const;
     bool previewColor() const;
 
-public Q_SLOTS:
-    void setColor(const QColor& color);
-    void setShowAlpha(bool showAlpha);
-    void setPreviewColor(bool previewColor);
+    void setColor(const QColor& color); W_SLOT(setColor)
+    void setShowAlpha(bool showAlpha); W_SLOT(setShowAlpha)
+    void setPreviewColor(bool previewColor); W_SLOT(setPreviewColor)
 
-Q_SIGNALS:
     /**
      * \brief Emitted when the color is changed by any means
      */
-    void colorChanged(const QColor& color);
+    void colorChanged(const QColor& color) W_SIGNAL(colorChanged, color)
     /**
      * \brief Emitted when the user is typing a color but has not finished yet
      */
-    void colorEdited(const QColor& color);
+    void colorEdited(const QColor& color) W_SIGNAL(colorEdited, color)
     /**
      * \brief Emitted when the user finished to edit a string
      */
-    void colorEditingFinished(const QColor& color);
+    void colorEditingFinished(const QColor& color) W_SIGNAL(colorEditingFinished, color)
 
-    void showAlphaChanged(bool showAlpha);
-    void previewColorChanged(bool previewColor);
+    void showAlphaChanged(bool showAlpha) W_SIGNAL(showAlphaChanged, showAlpha)
+    void previewColorChanged(bool previewColor) W_SIGNAL(previewColorChanged, previewColor)
+
+    W_PROPERTY(QColor, color READ color WRITE setColor NOTIFY colorChanged)
+    /**
+     * \brief Whether the widget displays and edits the alpha channel
+     */
+    W_PROPERTY(bool, showAlpha READ showAlpha WRITE setShowAlpha NOTIFY showAlphaChanged)
+    /**
+     * \brief If \b true, the background of the widget is changed to show the color
+     */
+    W_PROPERTY(bool, previewColor READ previewColor WRITE setPreviewColor NOTIFY previewColorChanged)
 
 protected:
     void dragEnterEvent(QDragEnterEvent *event) Q_DECL_OVERRIDE;

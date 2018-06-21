@@ -33,73 +33,7 @@ namespace color_widgets {
  */
 class Swatch : public QWidget
 {
-    Q_OBJECT
-
-    /**
-     * \brief Palette shown by the widget
-     */
-    Q_PROPERTY(const ColorPalette& palette READ palette WRITE setPalette NOTIFY paletteChanged)
-    /**
-     * \brief Currently selected color (-1 if no color is selected)
-     */
-    Q_PROPERTY(int selected READ selected WRITE setSelected NOTIFY selectedChanged)
-
-    /**
-     * \brief Preferred size for a color square
-     */
-    Q_PROPERTY(QSize colorSize READ colorSize WRITE setColorSize NOTIFY colorSizeChanged)
-
-    Q_PROPERTY(ColorSizePolicy colorSizePolicy READ colorSizePolicy WRITE setColorSizePolicy NOTIFY colorSizePolicyChanged)
-
-    /**
-     * \brief Border around the colors
-     */
-    Q_PROPERTY(QPen border READ border WRITE setBorder NOTIFY borderChanged)
-
-    /**
-     * \brief Selection border of the color
-     */
-    Q_PROPERTY(QPen selection READ selection WRITE setSelection NOTIFY selectionChanged)
-
-   /**
-    * \brief Set the empty color for the swatch
-    */
-   Q_PROPERTY(QColor emptyColor READ emptyColor WRITE setEmptyColor NOTIFY emptyColorChanged)
-
-   /**
-    * \brief Margin around the colors
-    */
-   Q_PROPERTY(int margin READ margin WRITE setMargin NOTIFY marginChanged)
-
-    /**
-     * \brief Forces the Swatch to display that many rows of colors
-     *
-     * If there are too few elements, the widget will display less than this
-     * many rows.
-     *
-     * A value of0 means that the number of rows is automatic.
-     *
-     * \note Conflicts with forcedColumns
-     */
-    Q_PROPERTY(int forcedRows READ forcedRows WRITE setForcedRows NOTIFY forcedRowsChanged)
-
-    /**
-     * \brief Forces the Swatch to display that many columns of colors
-     *
-     * If there are too few elements, the widget will display less than this
-     * many columns.
-     *
-     * A value of 0 means that the number of columns is automatic.
-     *
-     * \note Conflicts with forcedRows
-     */
-    Q_PROPERTY(int forcedColumns READ forcedColumns WRITE setForcedColumns NOTIFY forcedColumnsChanged)
-
-    /**
-     * \brief Whether the palette can be modified via user interaction
-     * \note Even when this is \b false, it can still be altered programmatically
-     */
-    Q_PROPERTY(bool readOnly READ readOnly WRITE setReadOnly NOTIFY readOnlyChanged)
+    W_OBJECT(Swatch)
 
 
 public:
@@ -150,39 +84,37 @@ public:
 
     bool readOnly() const;
 
-public Q_SLOTS:
-    void setPalette(const ColorPalette& palette);
-    void setSelected(int selected);
-    void clearSelection();
-    void setColorSize(const QSize& colorSize);
-    void setColorSizePolicy(ColorSizePolicy colorSizePolicy);
-    void setBorder(const QPen& border);
-    void setSelection(const QPen& selection);
-    void setMargin(const int& margin);
-    void setEmptyColor(const QColor& emptyColor);
-    void setForcedRows(int forcedRows);
-    void setForcedColumns(int forcedColumns);
-    void setReadOnly(bool readOnly);
+    void setPalette(const ColorPalette& palette); W_SLOT(setPalette)
+    void setSelected(int selected); W_SLOT(setSelected)
+    void clearSelection(); W_SLOT(clearSelection)
+    void setColorSize(const QSize& colorSize); W_SLOT(setColorSize)
+    void setColorSizePolicy(ColorSizePolicy colorSizePolicy); W_SLOT(setColorSizePolicy)
+    void setBorder(const QPen& border); W_SLOT(setBorder)
+    void setSelection(const QPen& selection); W_SLOT(setSelection)
+    void setMargin(const int& margin); W_SLOT(setMargin)
+    void setEmptyColor(const QColor& emptyColor); W_SLOT(setEmptyColor)
+    void setForcedRows(int forcedRows); W_SLOT(setForcedRows)
+    void setForcedColumns(int forcedColumns); W_SLOT(setForcedColumns)
+    void setReadOnly(bool readOnly); W_SLOT(setReadOnly)
     /**
      * \brief Remove the currently seleceted color
      **/
     void removeSelected();
 
-Q_SIGNALS:
-    void paletteChanged(const ColorPalette& palette);
-    void selectedChanged(int selected);
-    void colorSelected(const QColor& color);
-    void colorSizeChanged(const QSize& colorSize);
-    void colorSizePolicyChanged(ColorSizePolicy colorSizePolicy);
-    void doubleClicked(int index);
-    void rightClicked(int index);
-    void forcedRowsChanged(int forcedRows);
-    void forcedColumnsChanged(int forcedColumns);
-    void readOnlyChanged(bool readOnly);
-    void borderChanged(const QPen& border);
-    void selectionChanged(const QPen& selection);
-    void marginChanged(const int& margin);
-    void emptyColorChanged(const QColor& emptyColor);
+    void paletteChanged(const ColorPalette& palette) W_SIGNAL(paletteChanged, palette);
+    void selectedChanged(int selected)  W_SIGNAL(selectedChanged, selected);
+    void colorSelected(const QColor& color) W_SIGNAL(colorSelected, color);
+    void colorSizeChanged(const QSize& colorSize) W_SIGNAL(colorSizeChanged, colorSize);
+    void colorSizePolicyChanged(ColorSizePolicy colorSizePolicy) W_SIGNAL(colorSizePolicyChanged, colorSizePolicy);
+    void doubleClicked(int index) W_SIGNAL(doubleClicked, index);
+    void rightClicked(int index) W_SIGNAL(rightClicked, index);
+    void forcedRowsChanged(int forcedRows) W_SIGNAL(forcedRowsChanged, forcedRows);
+    void forcedColumnsChanged(int forcedColumns) W_SIGNAL(forcedColumnsChanged, forcedColumns);
+    void readOnlyChanged(bool readOnly) W_SIGNAL(readOnlyChanged, readOnly);
+    void borderChanged(const QPen& border) W_SIGNAL(borderChanged, border);
+    void selectionChanged(const QPen& selection) W_SIGNAL(selectionChanged, selection);
+    void marginChanged(const int& margin) W_SIGNAL(marginChanged, margin);
+    void emptyColorChanged(const QColor& emptyColor) W_SIGNAL(emptyColorChanged, emptyColor);
 
 protected:
     bool event(QEvent* event) Q_DECL_OVERRIDE;
@@ -202,11 +134,76 @@ protected:
     void dragLeaveEvent(QDragLeaveEvent *event) Q_DECL_OVERRIDE;
     void dropEvent(QDropEvent* event) Q_DECL_OVERRIDE;
 
-protected Q_SLOTS:
     /**
      * \brief Connected to the internal palette object to keep eveything consistent
      */
-    void paletteModified();
+    void paletteModified(); W_SLOT(paletteModified)
+
+    /**
+     * \brief Palette shown by the widget
+     */
+    //W_PROPERTY(const ColorPalette&, palette READ palette WRITE setPalette NOTIFY paletteChanged)
+    /**
+     * \brief Currently selected color (-1 if no color is selected)
+     */
+    W_PROPERTY(int, selected READ selected WRITE setSelected NOTIFY selectedChanged)
+
+    /**
+     * \brief Preferred size for a color square
+     */
+    W_PROPERTY(QSize, colorSize READ colorSize WRITE setColorSize NOTIFY colorSizeChanged)
+
+    W_PROPERTY(ColorSizePolicy, colorSizePolicy READ colorSizePolicy WRITE setColorSizePolicy NOTIFY colorSizePolicyChanged)
+
+    /**
+     * \brief Border around the colors
+     */
+    W_PROPERTY(QPen, border READ border WRITE setBorder NOTIFY borderChanged)
+
+    /**
+     * \brief Selection border of the color
+     */
+    W_PROPERTY(QPen, selection READ selection WRITE setSelection NOTIFY selectionChanged)
+
+   /**
+    * \brief Set the empty color for the swatch
+    */
+    W_PROPERTY(QColor, emptyColor READ emptyColor WRITE setEmptyColor NOTIFY emptyColorChanged)
+
+   /**
+    * \brief Margin around the colors
+    */
+    W_PROPERTY(int, margin READ margin WRITE setMargin NOTIFY marginChanged)
+
+    /**
+     * \brief Forces the Swatch to display that many rows of colors
+     *
+     * If there are too few elements, the widget will display less than this
+     * many rows.
+     *
+     * A value of0 means that the number of rows is automatic.
+     *
+     * \note Conflicts with forcedColumns
+     */
+     W_PROPERTY(int, forcedRows READ forcedRows WRITE setForcedRows NOTIFY forcedRowsChanged)
+
+    /**
+     * \brief Forces the Swatch to display that many columns of colors
+     *
+     * If there are too few elements, the widget will display less than this
+     * many columns.
+     *
+     * A value of 0 means that the number of columns is automatic.
+     *
+     * \note Conflicts with forcedRows
+     */
+    W_PROPERTY(int, forcedColumns READ forcedColumns WRITE setForcedColumns NOTIFY forcedColumnsChanged)
+
+    /**
+     * \brief Whether the palette can be modified via user interaction
+     * \note Even when this is \b false, it can still be altered programmatically
+     */
+    W_PROPERTY(bool, readOnly READ readOnly WRITE setReadOnly NOTIFY readOnlyChanged)
 
 private:
     class Private;
@@ -215,4 +212,8 @@ private:
 
 
 } // namespace color_widgets
+W_REGISTER_ARGTYPE(color_widgets::ColorPalette)
+W_REGISTER_ARGTYPE(QColor)
+W_REGISTER_ARGTYPE(QPen)
+W_REGISTER_ARGTYPE(color_widgets::Swatch::ColorSizePolicy)
 #endif // COLOR_WIDGETS_SWATCH_HPP

@@ -29,42 +29,16 @@
 #include <QPair>
 #include <QPixmap>
 #include "colorwidgets_global.hpp"
-
+#include <wobjectdefs.h>
 namespace color_widgets {
 
 class QCP_EXPORT ColorPalette : public QObject
 {
-    Q_OBJECT
-
-    /**
-     * \brief The list of colors
-     */
-    Q_PROPERTY(QVector<value_type> colors READ colors WRITE setColors NOTIFY colorsChanged)
-    /**
-     * \brief Name of the palette
-     */
-    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-    /**
-     * \brief Number of colors to display in a row, if 0 unspecified
-     */
-    Q_PROPERTY(int columns READ columns WRITE setColumns NOTIFY columnsChanged)
-    /**
-     * \brief Number of colors
-     */
-    Q_PROPERTY(int count READ count)
-    /**
-     * \brief Name of the file the palette has been read from
-     */
-    Q_PROPERTY(QString fileName READ fileName WRITE setFileName NOTIFY fileNameChanged)
-    /**
-     * \brief Whether it has been modified and it might be advisable to save it
-     */
-    Q_PROPERTY(bool dirty READ dirty WRITE setDirty NOTIFY dirtyChanged)
+    W_OBJECT(ColorPalette)
 
 public:
     typedef QPair<QColor,QString> value_type;
 
-    ColorPalette(const QVector<QColor>& colors, const QString& name = QString(), int columns = 0);
     ColorPalette(const QVector<QPair<QColor,QString> >& colors, const QString& name = QString(), int columns = 0);
     explicit ColorPalette(const QString& name = QString());
     ColorPalette(const ColorPalette& other);
@@ -100,7 +74,7 @@ public:
      * \brief Convert to a color table
      */
     Q_INVOKABLE QVector<QRgb> colorTable() const;
-    
+
     /**
      * \brief Creates a ColorPalette from a color table
      */
@@ -137,78 +111,99 @@ public:
      */
     QPixmap preview(const QSize& size, const QColor& background=Qt::transparent) const;
 
-public Q_SLOTS:
-    void setColumns(int columns);
+    void setColumns(int columns); W_SLOT(setColumns)
 
-    void setColors(const QVector<QColor>& colors);
-    void setColors(const QVector<QPair<QColor,QString> >& colors);
+    void setColors(const QVector<QPair<QColor,QString> >& colors); W_SLOT(setColors, (const QVector<QPair<QColor,QString> >&))
 
     /**
      * \brief Change the color at the given index
      */
-    void setColorAt(int index, const QColor& color);
+    void setColorAt(int index, const QColor& color); W_SLOT(setColorAt, (int, const QColor&))
     /**
      * \brief Change the color at the given index
      */
-    void setColorAt(int index, const QColor& color, const QString& name);
+    void setColorAt(int index, const QColor& color, const QString& name); W_SLOT(setColorAt, (int , const QColor& , const QString& ))
     /**
      * \brief Change the name of a color
      */
-    void setNameAt(int index, const QString& name = QString());
+    void setNameAt(int index, const QString& name = QString()); W_SLOT(setNameAt)
     /**
      * \brief Append a color at the end
      */
-    void appendColor(const QColor& color, const QString& name = QString());
+    void appendColor(const QColor& color, const QString& name = QString());  W_SLOT(appendColor)
     /**
      * \brief Insert a color in an arbitrary location
      */
-    void insertColor(int index, const QColor& color, const QString& name = QString());
+    void insertColor(int index, const QColor& color, const QString& name = QString());  W_SLOT(insertColor)
     /**
      * \brief Remove the color at the given index
      */
-    void eraseColor(int index);
+    void eraseColor(int index); W_SLOT(eraseColor)
 
     /**
      * \brief Change file name and save
      * \returns \b true on success
      */
-    bool save(const QString& filename);
+    bool save(const QString& filename);  W_SLOT(save, (const QString&))
     /**
      * \brief save to file, the filename is \c fileName or determined automatically
      * \returns \b true on success
      */
-    bool save();
+    bool save(); W_SLOT(save, ())
 
-    void setName(const QString& name);
-    void setFileName(const QString& name);
-    void setDirty(bool dirty);
+    void setName(const QString& name); W_SLOT(setName)
+    void setFileName(const QString& name); W_SLOT(setFileName)
+    void setDirty(bool dirty); W_SLOT(setDirty)
 
-Q_SIGNALS:
     /**
      * \brief Emitted when all the colors have changed
      */
-    void colorsChanged(const QVector<QPair<QColor,QString> >&);
-    void columnsChanged(int);
-    void nameChanged(const QString&);
-    void fileNameChanged(const QString&);
-    void dirtyChanged(bool);
+    void colorsChanged(const QVector<QPair<QColor,QString> >& p) W_SIGNAL(colorsChanged, p);
+    void columnsChanged(int p) W_SIGNAL(columnsChanged, p);
+    void nameChanged(const QString& p) W_SIGNAL(nameChanged, p);
+    void fileNameChanged(const QString& p) W_SIGNAL(fileNameChanged, p);
+    void dirtyChanged(bool p) W_SIGNAL(dirtyChanged, p);
     /**
      * \brief Emitted when the color or the name at the given index has been modified
      */
-    void colorChanged(int index);
+    void colorChanged(int index) W_SIGNAL(colorChanged, index);
     /**
      * \brief Emitted when the color at the given index has been removed
      */
-    void colorRemoved(int index);
+    void colorRemoved(int index) W_SIGNAL(colorRemoved, index);
     /**
      * \brief Emitted when a single color has been added
      */
-    void colorAdded(int index);
+    void colorAdded(int index) W_SIGNAL(colorAdded, index);
     /**
      * \brief Emitted when the colors have been modified with a simple operation (set, append etc.)
      */
-    void colorsUpdated(const QVector<QPair<QColor,QString>>&);
+    void colorsUpdated(const QVector<QPair<QColor,QString>>& c) W_SIGNAL(colorsUpdated, c);
 
+    /**
+     * \brief The list of colors
+     */
+    W_PROPERTY(QVector<value_type>, colors READ colors WRITE setColors NOTIFY colorsChanged)
+    /**
+     * \brief Name of the palette
+     */
+    W_PROPERTY(QString, name READ name WRITE setName NOTIFY nameChanged)
+    /**
+     * \brief Number of colors to display in a row, if 0 unspecified
+     */
+    W_PROPERTY(int, columns READ columns WRITE setColumns NOTIFY columnsChanged)
+    /**
+     * \brief Number of colors
+     */
+    W_PROPERTY(int, count READ count)
+    /**
+     * \brief Name of the file the palette has been read from
+     */
+    W_PROPERTY(QString, fileName READ fileName WRITE setFileName NOTIFY fileNameChanged)
+    /**
+     * \brief Whether it has been modified and it might be advisable to save it
+     */
+    W_PROPERTY(bool, dirty READ dirty WRITE setDirty NOTIFY dirtyChanged)
 private:
     /**
      * \brief Returns \c name if it isn't null, otherwise a default value
@@ -226,4 +221,5 @@ private:
 
 } // namespace color_widgets
 
+W_REGISTER_ARGTYPE(QVector<QPair<QColor,QString>>)
 #endif // COLOR_WIDGETS_COLOR_PALETTE_HPP

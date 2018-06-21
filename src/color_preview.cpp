@@ -28,7 +28,9 @@
 #include <QMouseEvent>
 #include <QDrag>
 #include <QMimeData>
+#include <wobjectimpl.h>
 
+W_OBJECT_IMPL(color_widgets::ColorPreview)
 namespace color_widgets {
 
 class ColorPreview::Private

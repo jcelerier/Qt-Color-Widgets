@@ -24,6 +24,7 @@
 #define HUE_SLIDER_HPP
 
 #include "gradient_slider.hpp"
+#include <wobjectdefs.h>
 
 namespace color_widgets {
 
@@ -32,30 +33,7 @@ namespace color_widgets {
  */
 class QCP_EXPORT HueSlider : public GradientSlider
 {
-    Q_OBJECT
-    /**
-     * \brief Saturation used in the rainbow gradient, as a [0-1] float
-     */
-    Q_PROPERTY(qreal colorSaturation READ colorSaturation WRITE setColorSaturation)
-    /**
-     * \brief Value used in the rainbow gradient, as a [0-1] float
-     */
-    Q_PROPERTY(qreal colorValue READ colorValue WRITE setColorValue)
-    /**
-     * \brief Alpha used in the rainbow gradient, as a [0-1] float
-     */
-    Q_PROPERTY(qreal colorAlpha READ colorAlpha WRITE setColorAlpha)
-
-    /**
-     * \brief Color with corresponding color* components
-     */
-    Q_PROPERTY(QColor color READ color WRITE setColor)
-
-    /**
-     * \brief Normalized Hue, as indicated from the slider
-     */
-    Q_PROPERTY(qreal colorHue READ colorHue WRITE setColorHue NOTIFY colorHueChanged)
-
+    W_OBJECT(HueSlider)
 
 public:
     explicit HueSlider(QWidget *parent = nullptr);
@@ -68,22 +46,44 @@ public:
     QColor color() const;
     qreal colorHue() const;
 
-public Q_SLOTS:
-    void setColorValue(qreal value);
-    void setColorSaturation(qreal value);
-    void setColorAlpha(qreal alpha);
-    void setColorHue(qreal colorHue);
+public:
+    void setColorValue(qreal value);  W_SLOT(setColorValue)
+    void setColorSaturation(qreal value);  W_SLOT(setColorSaturation)
+    void setColorAlpha(qreal alpha);  W_SLOT(setColorAlpha)
+    void setColorHue(qreal colorHue);  W_SLOT(setColorHue)
     /**
      * \brief Set Hue Saturation and ColorValue, ignoring alpha
      */
-    void setColor(const QColor& color);
+    void setColor(const QColor& color);  W_SLOT(setColor)
     /**
      * \brief Set Hue Saturation, ColorValue and Alpha
      */
-    void setFullColor(const QColor& color);
+    void setFullColor(const QColor& color); W_SLOT(setFullColor)
 
-Q_SIGNALS:
-    void colorHueChanged(qreal colorHue);
+    void colorHueChanged(qreal colorHue) W_SIGNAL(colorHueChanged, colorHue);
+
+    /**
+     * \brief Saturation used in the rainbow gradient, as a [0-1] float
+     */
+    W_PROPERTY(qreal, colorSaturation READ colorSaturation WRITE setColorSaturation)
+    /**
+     * \brief Value used in the rainbow gradient, as a [0-1] float
+     */
+    W_PROPERTY(qreal, colorValue READ colorValue WRITE setColorValue)
+    /**
+     * \brief Alpha used in the rainbow gradient, as a [0-1] float
+     */
+    W_PROPERTY(qreal, colorAlpha READ colorAlpha WRITE setColorAlpha)
+
+    /**
+     * \brief Color with corresponding color* components
+     */
+    W_PROPERTY(QColor, color READ color WRITE setColor)
+
+    /**
+     * \brief Normalized Hue, as indicated from the slider
+     */
+    W_PROPERTY(qreal, colorHue READ colorHue WRITE setColorHue NOTIFY colorHueChanged)
 
 private:
     class Private;

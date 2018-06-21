@@ -28,7 +28,9 @@
 #include <QDragEnterEvent>
 #include <QMimeData>
 #include "color_utils.hpp"
+#include <wobjectimpl.h>
 
+W_OBJECT_IMPL(color_widgets::ColorWheel)
 namespace color_widgets {
 
 enum MouseStatus

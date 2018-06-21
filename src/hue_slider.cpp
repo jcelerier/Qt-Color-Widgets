@@ -21,7 +21,8 @@
  *
  */
 #include "hue_slider.hpp"
-
+#include <wobjectimpl.h>
+W_OBJECT_IMPL(color_widgets::HueSlider)
 namespace color_widgets {
 
 class HueSlider::Private
@@ -72,7 +73,7 @@ HueSlider::HueSlider(Qt::Orientation orientation, QWidget *parent) :
 
 HueSlider::~HueSlider()
 {
-	delete p;
+  delete p;
 }
 
 qreal HueSlider::colorSaturation() const

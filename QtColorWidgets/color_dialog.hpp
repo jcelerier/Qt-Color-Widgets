@@ -27,23 +27,14 @@
 #include "color_wheel.hpp"
 
 #include <QDialog>
-
+#include <wobjectdefs.h>
 class QAbstractButton;
 
 namespace color_widgets {
 
 class QCP_EXPORT ColorDialog : public QDialog
 {
-    Q_OBJECT
-    Q_ENUMS(ButtonMode)
-    Q_PROPERTY(QColor color READ color WRITE setColor NOTIFY colorChanged DESIGNABLE true)
-    Q_PROPERTY(ColorWheel::DisplayFlags wheelFlags READ wheelFlags WRITE setWheelFlags NOTIFY wheelFlagsChanged)
-    /**
-     * \brief whether the color alpha channel can be edited.
-     *
-     * If alpha is disabled, the selected color's alpha will always be 255.
-     */
-    Q_PROPERTY(bool alphaEnabled READ alphaEnabled WRITE setAlphaEnabled NOTIFY alphaEnabledChanged)
+    W_OBJECT(ColorDialog)
 
 public:
     enum ButtonMode {
@@ -51,7 +42,7 @@ public:
         OkApplyCancel,
         Close
     };
-
+    W_ENUM(ButtonMode, OkCancel, OkApplyCancel, Close)
     explicit ColorDialog(QWidget *parent = 0, Qt::WindowFlags f = 0);
 
     /**
@@ -82,66 +73,77 @@ public:
     void setButtonMode(ButtonMode mode);
     ButtonMode buttonMode() const;
 
-    QSize sizeHint() const;
+    QSize sizeHint() const  override;
 
     ColorWheel::DisplayFlags wheelFlags() const;
 
-public Q_SLOTS:
 
     /**
      * Change color
      */
-    void setColor(const QColor &c);
+    void setColor(const QColor &c); W_SLOT(setColor)
 
-	/**
+  /**
      * Set the current color and show the dialog
      */
-    void showColor(const QColor &oldcolor);
+    void showColor(const QColor &oldcolor); W_SLOT(showColor)
 
-    void setWheelFlags(ColorWheel::DisplayFlags flags);
+    void setWheelFlags(ColorWheel::DisplayFlags flags);  W_SLOT(setWheelFlags)
 
     /**
      * Set whether the color alpha channel can be edited.
      * If alpha is disabled, the selected color's alpha will always be 255.
      */
-    void setAlphaEnabled(bool a);
+    void setAlphaEnabled(bool a); W_SLOT(setAlphaEnabled)
 
-Q_SIGNALS:
     /**
      * The current color was changed
      */
-    void colorChanged(QColor);
+    void colorChanged(QColor c) W_SIGNAL(colorChanged, c)
 
     /**
      * The user selected the new color by pressing Ok/Apply
      */
-    void colorSelected(QColor);
+    void colorSelected(QColor c) W_SIGNAL(colorSelected, c)
 
-    void wheelFlagsChanged(ColorWheel::DisplayFlags flags);
-    void alphaEnabledChanged(bool alphaEnabled);
+    void wheelFlagsChanged(ColorWheel::DisplayFlags flags) W_SIGNAL(wheelFlagsChanged, flags)
+    void alphaEnabledChanged(bool alphaEnabled) W_SIGNAL(alphaEnabledChanged, alphaEnabled)
 
 private Q_SLOTS:
     /// Update all the Ui elements to match the selected color
-    void update_widgets();
+    void update_widgets();W_SLOT(update_widgets)
+
     /// Update from HSV sliders
-    void set_hsv();
+    void set_hsv();W_SLOT(set_hsv)
+
     /// Update from RGB sliders
-    void set_rgb();
+    void set_rgb();W_SLOT(set_rgb)
 
-    void on_edit_hex_colorChanged(const QColor& color);
-    void on_edit_hex_colorEditingFinished(const QColor& color);
 
-    void on_buttonBox_clicked(QAbstractButton*);
+    void on_edit_hex_colorChanged(const QColor& color);W_SLOT(on_edit_hex_colorChanged)
+
+    void on_edit_hex_colorEditingFinished(const QColor& color);W_SLOT(on_edit_hex_colorEditingFinished)
+
+
+    void on_buttonBox_clicked(QAbstractButton*); W_SLOT(on_buttonBox_clicked)
 
 private:
     void setColorInternal(const QColor &color);
 
 protected:
-    void dragEnterEvent(QDragEnterEvent *event);
-    void dropEvent(QDropEvent * event);
-    void mouseReleaseEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
+    void dragEnterEvent(QDragEnterEvent *event)  override;
+    void dropEvent(QDropEvent * event)  override;
+    void mouseReleaseEvent(QMouseEvent *event)  override;
+    void mouseMoveEvent(QMouseEvent *event)  override;
 
+    W_PROPERTY(QColor, color READ color WRITE setColor NOTIFY colorChanged)
+    W_PROPERTY(ColorWheel::DisplayFlags, wheelFlags READ wheelFlags WRITE setWheelFlags NOTIFY wheelFlagsChanged)
+    /**
+     * \brief whether the color alpha channel can be edited.
+     *
+     * If alpha is disabled, the selected color's alpha will always be 255.
+     */
+    W_PROPERTY(bool, alphaEnabled READ alphaEnabled WRITE setAlphaEnabled NOTIFY alphaEnabledChanged)
 private:
     class Private;
     Private * const p;
@@ -149,4 +151,5 @@ private:
 
 } // namespace color_widgets
 
+W_REGISTER_ARGTYPE(QAbstractButton*)
 #endif // COLOR_DIALOG_HPP

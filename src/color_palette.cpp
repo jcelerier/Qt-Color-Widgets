@@ -26,7 +26,8 @@
 #include <QHash>
 #include <QPainter>
 #include <QFileInfo>
-
+#include <wobjectimpl.h>
+W_OBJECT_IMPL(color_widgets::ColorPalette)
 namespace color_widgets {
 
 class ColorPalette::Private
@@ -43,16 +44,6 @@ public:
         return index >= 0 && index < colors.size();
     }
 };
-
-ColorPalette::ColorPalette(const QVector<QColor>& colors,
-                           const QString& name,
-                           int columns)
-    : p ( new Private )
-{
-    setName(name);
-    setColumns(columns);
-    setColors(colors);
-}
 
 ColorPalette::ColorPalette(const QString& name)
     : p ( new Private )
@@ -325,14 +316,6 @@ void ColorPalette::setColumns(int columns)
     }
 }
 
-void ColorPalette::setColors(const QVector<QColor>& colors)
-{
-    p->colors.clear();
-    Q_FOREACH(const QColor& col, colors)
-        p->colors.push_back(qMakePair(col,QString()));
-    setDirty(true);
-    colorsChanged(p->colors);
-}
 
 void ColorPalette::setColors(const QVector<QPair<QColor,QString> >& colors)
 {

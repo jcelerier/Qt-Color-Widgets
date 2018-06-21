@@ -28,7 +28,7 @@
 #include <QSlider>
 #include <QPen>
 #include <QGradient>
-
+#include <wobjectdefs.h>
 namespace color_widgets {
 
 /**
@@ -36,15 +36,7 @@ namespace color_widgets {
  */
 class QCP_EXPORT GradientSlider : public QSlider
 {
-    Q_OBJECT
-    Q_PROPERTY(QBrush background READ background WRITE setBackground)
-    Q_PROPERTY(int verticalSpacing READ verticalSpacing WRITE setVerticalSpacing)
-    Q_PROPERTY(QPen border READ border WRITE setBorder)
-    Q_PROPERTY(QLinearGradient gradient READ gradient WRITE setGradient)
-    Q_PROPERTY(QGradientStops colors READ colors WRITE setColors DESIGNABLE false)
-    Q_PROPERTY(QColor firstColor READ firstColor WRITE setFirstColor STORED false)
-    Q_PROPERTY(QColor lastColor READ lastColor WRITE setLastColor STORED false)
-
+    W_OBJECT(GradientSlider)
 public:
     explicit GradientSlider(QWidget *parent = 0);
     explicit GradientSlider(Qt::Orientation orientation, QWidget *parent = 0);
@@ -76,11 +68,6 @@ public:
     void setGradient(const QLinearGradient &gradient);
 
     /**
-     * Overload: create an evenly distributed gradient of the given colors
-     */
-    void setColors(const QVector<QColor> &colors);
-
-    /**
      * \brief Set the first color of the gradient
      *
      * If the gradient is currently empty it will create a stop with the given color
@@ -108,9 +95,17 @@ public:
      * \returns QColor() con empty gradient
      */
     QColor lastColor() const;
-    
+
+    W_PROPERTY(QBrush, background READ background WRITE setBackground)
+    W_PROPERTY(int, verticalSpacing READ verticalSpacing WRITE setVerticalSpacing)
+    W_PROPERTY(QPen, border READ border WRITE setBorder)
+    W_PROPERTY(QLinearGradient, gradient READ gradient WRITE setGradient)
+    W_PROPERTY(QColor, firstColor READ firstColor WRITE setFirstColor)
+    W_PROPERTY(QColor, lastColor READ lastColor WRITE setLastColor)
+    W_PROPERTY(QGradientStops, colors READ colors WRITE setColors)
+
 protected:
-    void paintEvent(QPaintEvent *ev);
+    void paintEvent(QPaintEvent *ev)  override;
 
 private:
     class Private;
