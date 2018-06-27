@@ -120,9 +120,9 @@ ColorPaletteWidget::ColorPaletteWidget(QWidget* parent)
     connect(p->swatch, &Swatch::forcedRowsChanged, this, &ColorPaletteWidget::forcedRowsChanged);
     connect(p->swatch, &Swatch::forcedColumnsChanged, this, &ColorPaletteWidget::forcedColumnsChanged);
     connect(p->swatch, &Swatch::colorSelected,
-            this, (void (ColorPaletteWidget::*)(const QColor&)) &ColorPaletteWidget::currentColorChanged);
+            this, &ColorPaletteWidget::currentColorChanged);
     connect(p->swatch, &Swatch::selectedChanged,
-            this, (void (ColorPaletteWidget::*)(int)) &ColorPaletteWidget::currentColorChanged);
+            this, &ColorPaletteWidget::selectedChanged);
     connect(p->swatch, &Swatch::borderChanged, this, &ColorPaletteWidget::borderChanged);
 
     connect(&p->swatch->palette(), &ColorPalette::dirtyChanged, p->button_palette_save, &QWidget::setEnabled);
