@@ -40,7 +40,7 @@ class QCP_EXPORT GradientSlider : public QSlider
 public:
     explicit GradientSlider(QWidget *parent = 0);
     explicit GradientSlider(Qt::Orientation orientation, QWidget *parent = 0);
-    ~GradientSlider();
+    ~GradientSlider() override;
 
     /// Get the background, it's visible for transparent gradient stops
     QBrush background() const;

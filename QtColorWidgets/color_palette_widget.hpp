@@ -32,7 +32,7 @@ namespace color_widgets {
 /**
  * \brief A widget to use and modify palettes
  */
-class ColorPaletteWidget : public QWidget
+class Q_DECL_EXPORT ColorPaletteWidget final : public QWidget
 {
     W_OBJECT(ColorPaletteWidget)
 

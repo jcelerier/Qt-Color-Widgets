@@ -34,7 +34,7 @@ namespace color_widgets {
  * It has an outer wheel to select the Hue and an intenal square to select
  * Saturation and Lightness.
  */
-class QCP_EXPORT ColorWheel : public QWidget
+class QCP_EXPORT ColorWheel final : public QWidget
 {
     W_OBJECT(ColorWheel)
 

@@ -29,7 +29,7 @@ namespace color_widgets {
  * \brief A color selector bound to a color reference
  * \todo Maybe this can be removed
  */
-class QCP_EXPORT BoundColorSelector : public ColorSelector
+class QCP_EXPORT BoundColorSelector final : public ColorSelector
 {
     Q_OBJECT
 private:

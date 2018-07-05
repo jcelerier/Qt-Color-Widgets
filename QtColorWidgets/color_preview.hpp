@@ -33,7 +33,7 @@ namespace color_widgets {
 /**
  * Simple widget that shows a preview of a color
  */
-class QCP_EXPORT ColorPreview : public QWidget
+class QCP_EXPORT ColorPreview final : public QWidget
 {
     W_OBJECT(ColorPreview)
 

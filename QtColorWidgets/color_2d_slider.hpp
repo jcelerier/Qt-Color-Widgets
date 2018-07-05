@@ -30,7 +30,7 @@ namespace color_widgets {
 /**
  * \brief A 2D slider that edits 2 color components
  */
-class QCP_EXPORT Color2DSlider : public QWidget
+class QCP_EXPORT Color2DSlider final : public QWidget
 {
     Q_OBJECT
 
@@ -55,7 +55,7 @@ public:
     Q_ENUMS(Component)
 
     explicit Color2DSlider(QWidget *parent = nullptr);
-    ~Color2DSlider();
+    ~Color2DSlider() override;
 
     /// Get current color
     QColor color() const;

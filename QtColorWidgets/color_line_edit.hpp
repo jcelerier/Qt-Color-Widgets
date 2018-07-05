@@ -42,7 +42,7 @@ namespace color_widgets {
  *  * Long hex strings  #ff0000ff
  *  * Function like     rgba(255,0,0,255)
  */
-class QCP_EXPORT ColorLineEdit : public QLineEdit
+class QCP_EXPORT ColorLineEdit final : public QLineEdit
 {
     W_OBJECT(ColorLineEdit)
 

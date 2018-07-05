@@ -30,7 +30,7 @@ namespace color_widgets {
 /**
  * Color preview that opens a color dialog
  */
-class QCP_EXPORT ColorSelector : public ColorPreview
+class QCP_EXPORT ColorSelector final : public ColorPreview
 {
     Q_OBJECT
     Q_ENUMS(UpdateMode)
@@ -80,7 +80,7 @@ private:
 
     class Private;
     Private * const p;
-    
+
 };
 
 } // namespace color_widgets

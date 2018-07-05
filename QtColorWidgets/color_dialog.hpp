@@ -32,7 +32,7 @@ class QAbstractButton;
 
 namespace color_widgets {
 
-class QCP_EXPORT ColorDialog : public QDialog
+class QCP_EXPORT ColorDialog final : public QDialog
 {
     W_OBJECT(ColorDialog)
 

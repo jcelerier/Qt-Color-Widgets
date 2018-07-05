@@ -32,7 +32,7 @@
 #include <wobjectdefs.h>
 namespace color_widgets {
 
-class QCP_EXPORT ColorPalette : public QObject
+class QCP_EXPORT ColorPalette final : public QObject
 {
     W_OBJECT(ColorPalette)
 
