@@ -31,11 +31,9 @@ namespace color_widgets {
 /**
  * \brief A widget drawing a palette
  */
-class Swatch final : public QWidget
+class Q_DECL_EXPORT Swatch final : public QWidget
 {
     W_OBJECT(Swatch)
-
-
 public:
     enum ColorSizePolicy
     {
@@ -45,8 +43,8 @@ public:
     };
     Q_ENUMS(ColorSizePolicy)
 
-    Swatch(QWidget* parent = 0);
-    ~Swatch();
+    Swatch(QWidget* parent = nullptr);
+    ~Swatch() override;
 
     QSize sizeHint() const Q_DECL_OVERRIDE;
     QSize minimumSizeHint() const Q_DECL_OVERRIDE;
