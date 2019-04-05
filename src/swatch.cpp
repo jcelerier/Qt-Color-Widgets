@@ -531,38 +531,12 @@ void Swatch::mousePressEvent(QMouseEvent *event)
     if ( event->button() == Qt::LeftButton )
     {
         setSelected(indexAt(event->pos()));
-        p->drag_pos = event->pos();
-        p->drag_index = indexAt(event->pos());
     }
     else if ( event->button() == Qt::RightButton )
     {
         int index = indexAt(event->pos());
         if ( index != -1 )
             rightClicked(index);
-    }
-}
-
-void Swatch::mouseMoveEvent(QMouseEvent *event)
-{
-    if ( p->drag_index != -1 &&  (event->buttons() & Qt::LeftButton) &&
-        (p->drag_pos - event->pos()).manhattanLength() >= QApplication::startDragDistance() )
-    {
-        QColor color = p->palette.colorAt(p->drag_index);
-
-        QPixmap preview(24,24);
-        preview.fill(color);
-
-        QMimeData *mimedata = new QMimeData;
-        mimedata->setColorData(color);
-        mimedata->setText(p->palette.nameAt(p->drag_index));
-
-        QDrag *drag = new QDrag(this);
-        drag->setMimeData(mimedata);
-        drag->setPixmap(preview);
-        Qt::DropActions actions = Qt::CopyAction;
-        if ( !p->readonly )
-            actions |= Qt::MoveAction;
-        drag->exec(actions);
     }
 }
 
@@ -574,110 +548,6 @@ void Swatch::mouseReleaseEvent(QMouseEvent *event)
     }
 }
 
-void Swatch::mouseDoubleClickEvent(QMouseEvent *event)
-{
-    if ( event->button() == Qt::LeftButton )
-    {
-        int index = indexAt(event->pos());
-        if ( index != -1 )
-            doubleClicked(index);
-    }
-}
-
-void Swatch::wheelEvent(QWheelEvent* event)
-{
-    if ( event->delta() > 0 )
-        p->selected = qMin(p->selected + 1, p->palette.count() - 1);
-    else if ( p->selected == -1 )
-            p->selected = p->palette.count() - 1;
-    else if ( p->selected > 0 )
-        p->selected--;
-    setSelected(p->selected);
-}
-
-void Swatch::dragEnterEvent(QDragEnterEvent *event)
-{
-    if ( p->readonly )
-        return;
-
-    p->dropEvent(event);
-
-    if ( p->drop_color.isValid() && p->drop_index != -1 )
-    {
-        if ( event->proposedAction() == Qt::MoveAction && event->source() == this )
-            event->setDropAction(Qt::MoveAction);
-        else
-            event->setDropAction(Qt::CopyAction);
-
-        event->accept();
-    }
-}
-
-void Swatch::dragMoveEvent(QDragMoveEvent* event)
-{
-    if ( p->readonly )
-        return;
-    p->dropEvent(event);
-}
-
-void Swatch::dragLeaveEvent(QDragLeaveEvent *event)
-{
-    p->clearDrop();
-}
-
-void Swatch::dropEvent(QDropEvent *event)
-{
-    if ( p->readonly )
-        return;
-
-    QString name;
-
-    // Gather up the color
-    if ( event->mimeData()->hasColor() && event->mimeData()->hasText() )
-            name = event->mimeData()->text();
-
-    // Not a color, discard
-    if ( !p->drop_color.isValid() || p->drop_index == -1 )
-        return;
-
-    p->dropEvent(event);
-
-    // Move unto self
-    if ( event->dropAction() == Qt::MoveAction && event->source() == this )
-    {
-        // Not moved => noop
-        if ( p->drop_index != p->drag_index && p->palette.colorAt(p->drop_index) == p->emptyColor )
-        {
-            p->palette.setColorAt(p->drag_index, p->emptyColor, name);
-            p->palette.setColorAt(p->drop_index, p->drop_color, name);
-        }
-        else if ( p->drop_index != p->drag_index && p->drop_index != p->drag_index + 1 )
-        {
-            // Erase the old color
-            p->palette.eraseColor(p->drag_index);
-            if ( p->drop_index > p->drag_index )
-                p->drop_index--;
-            p->selected = p->drop_index;
-            // Insert the dropped color
-            p->palette.insertColor(p->drop_index, p->drop_color, name);
-        }
-    }
-    // Move into a color cell
-    else if ( p->drop_overwrite )
-    {
-        p->palette.setColorAt(p->drop_index, p->drop_color, name);
-    }
-    // Insert the dropped color
-    else
-    {
-        p->palette.insertColor(p->drop_index, p->drop_color, name);
-    }
-
-    // Finalize
-    event->accept();
-    p->drag_index = -1;
-    p->clearDrop();
-}
 
 void Swatch::paletteModified()
 {
