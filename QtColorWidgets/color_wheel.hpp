@@ -134,14 +134,14 @@ public:
     /**
      * Emitted when the user selects a color or setColor is called
      */
-    void colorChanged(QColor c) W_SIGNAL(colorChanged, c);
+    void colorChanged(QColor c) E_SIGNAL(QCP_EXPORT, colorChanged, c);
 
     /**
      * Emitted when the user selects a color
      */
-    void colorSelected(QColor c) W_SIGNAL(colorSelected, c);
+    void colorSelected(QColor c) E_SIGNAL(QCP_EXPORT, colorSelected, c);
 
-    void displayFlagsChanged(ColorWheel::DisplayFlags flags) W_SIGNAL(displayFlagsChanged, flags);
+    void displayFlagsChanged(ColorWheel::DisplayFlags flags) E_SIGNAL(QCP_EXPORT, displayFlagsChanged, flags);
 
     W_PROPERTY(QColor, color READ color WRITE setColor NOTIFY colorChanged  )
     W_PROPERTY(qreal, hue READ hue WRITE setHue  )

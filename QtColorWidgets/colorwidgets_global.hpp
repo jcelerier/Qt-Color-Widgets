@@ -3,6 +3,7 @@
 
 #include <QtCore/QtGlobal>
 #define QCP_EXPORT Q_DECL_EXPORT
+#define QCP_EXPORTS 1
 /*
 #if defined(QTCOLORWIDGETS_LIBRARY)
 #    define QCP_EXPORT Q_DECL_EXPORT

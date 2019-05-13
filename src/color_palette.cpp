@@ -170,7 +170,7 @@ bool ColorPalette::loadImage(const QImage& image)
 ColorPalette ColorPalette::fromImage(const QImage& image)
 {
     ColorPalette p;
-    p.fromImage(image);
+    p.loadImage(image);
     return p;
 }
 
