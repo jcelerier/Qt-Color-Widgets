@@ -28,7 +28,7 @@
 #include <QSlider>
 #include <QPen>
 #include <QGradient>
-#include <wobjectdefs.h>
+#include <verdigris>
 namespace color_widgets {
 
 /**

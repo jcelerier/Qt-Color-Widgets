@@ -29,7 +29,7 @@
 #include <QPair>
 #include <QPixmap>
 #include "colorwidgets_global.hpp"
-#include <wobjectdefs.h>
+#include <verdigris>
 namespace color_widgets {
 
 class QCP_EXPORT ColorPalette final : public QObject

@@ -25,7 +25,7 @@
 #include "colorwidgets_global.hpp"
 #include <QLineEdit>
 #include <QColor>
-#include <wobjectdefs.h>
+#include <verdigris>
 
 namespace color_widgets {
 
