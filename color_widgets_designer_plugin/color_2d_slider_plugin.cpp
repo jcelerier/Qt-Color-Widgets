@@ -20,73 +20,72 @@
  *
  */
 #include "color_2d_slider_plugin.hpp"
+
 #include "color_2d_slider.hpp"
 
-Color2DSlider_Plugin::Color2DSlider_Plugin(QObject *parent) :
-    QObject(parent), initialized(false)
+Color2DSlider_Plugin::Color2DSlider_Plugin(QObject* parent) : QObject(parent), initialized(false)
 {
 }
 
-void Color2DSlider_Plugin::initialize(QDesignerFormEditorInterface *)
+void Color2DSlider_Plugin::initialize(QDesignerFormEditorInterface*)
 {
-    initialized = true;
+  initialized = true;
 }
 
 bool Color2DSlider_Plugin::isInitialized() const
 {
-    return initialized;
+  return initialized;
 }
 
-QWidget *Color2DSlider_Plugin::createWidget(QWidget *parent)
+QWidget* Color2DSlider_Plugin::createWidget(QWidget* parent)
 {
-    return new color_widgets::Color2DSlider(parent);
+  return new color_widgets::Color2DSlider(parent);
 }
 
 QString Color2DSlider_Plugin::name() const
 {
-    return "color_widgets::Color2DSlider";
+  return "color_widgets::Color2DSlider";
 }
 
 QString Color2DSlider_Plugin::group() const
 {
-    return "Color Widgets";
+  return "Color Widgets";
 }
 
 QIcon Color2DSlider_Plugin::icon() const
 {
-    color_widgets::Color2DSlider w;
-    w.resize(64,64);
-    QPixmap pix(64,64);
-    w.render(&pix);
-    return QIcon(pix);
+  color_widgets::Color2DSlider w;
+  w.resize(64, 64);
+  QPixmap pix(64, 64);
+  w.render(&pix);
+  return QIcon(pix);
 }
 
 QString Color2DSlider_Plugin::toolTip() const
 {
-    return "An analog widget to select 2 color components at the same time";
+  return "An analog widget to select 2 color components at the same time";
 }
 
 QString Color2DSlider_Plugin::whatsThis() const
 {
-    return toolTip();
+  return toolTip();
 }
 
 bool Color2DSlider_Plugin::isContainer() const
 {
-    return false;
+  return false;
 }
 
 QString Color2DSlider_Plugin::domXml() const
 {
-    return "<ui language=\"c++\">\n"
-           " <widget class=\"color_widgets::Color2DSlider\" name=\"color2DSlider\">\n"
-           " </widget>\n"
-           "</ui>\n";
+  return "<ui language=\"c++\">\n"
+         " <widget class=\"color_widgets::Color2DSlider\" "
+         "name=\"color2DSlider\">\n"
+         " </widget>\n"
+         "</ui>\n";
 }
 
 QString Color2DSlider_Plugin::includeFile() const
 {
-    return "color_2d_slider.hpp";
+  return "color_2d_slider.hpp";
 }
-
-

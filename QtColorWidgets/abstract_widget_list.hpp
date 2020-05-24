@@ -26,13 +26,14 @@
 
 #include <QSignalMapper>
 #include <QTableWidget>
+
 #include <colorwidgets-qt5_export.h>
 
 class QCP_EXPORT AbstractWidgetList : public QWidget
 {
   Q_OBJECT
 public:
-  explicit AbstractWidgetList(QWidget *parent = 0);
+  explicit AbstractWidgetList(QWidget* parent = 0);
   ~AbstractWidgetList();
 
   /**
@@ -45,12 +46,10 @@ public:
    */
   virtual void swap(int a, int b) = 0;
 
-
   /// Whether the given row index is valid
   bool isValidRow(int i) const { return i >= 0 && i < count(); }
 
   void setRowHeight(int row, int height);
-
 
 public Q_SLOTS:
   /**
@@ -67,7 +66,6 @@ Q_SIGNALS:
   void removed(int i);
 
 protected:
-
   /**
    *  \brief Create a new row with the given widget
    *
@@ -80,12 +78,14 @@ protected:
    */
   QWidget* widget(int i);
 
-
   /**
    *  \brief get the widget found at the given row
    */
-  template<class T>
-  T* widget_cast(int i) { return qobject_cast<T*>(widget(i)); }
+  template <class T>
+  T* widget_cast(int i)
+  {
+    return qobject_cast<T*>(widget(i));
+  }
 
   /**
    *  \brief clear all rows without emitting signals
@@ -101,11 +101,14 @@ private Q_SLOTS:
 
 private:
   class Private;
-  Private * const p;
+  Private* const p;
 
-  QWidget* create_button(QWidget* data, QSignalMapper*mapper,
-               QString icon_name, QString text,
-               QString tooltip = QString()) const;
+  QWidget* create_button(
+      QWidget* data,
+      QSignalMapper* mapper,
+      QString icon_name,
+      QString text,
+      QString tooltip = QString()) const;
 };
 
 #endif // ABSTRACT_WIDGET_LIST_HPP

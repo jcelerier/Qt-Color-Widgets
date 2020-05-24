@@ -25,91 +25,94 @@
 
 #include "colorwidgets_global.hpp"
 
-#include <QSlider>
-#include <QPen>
 #include <QGradient>
+#include <QPen>
+#include <QSlider>
+
 #include <verdigris>
-namespace color_widgets {
+namespace color_widgets
+{
 
 /**
  * \brief A slider that mover on top of a gradient
  */
 class QCP_EXPORT GradientSlider : public QSlider
 {
-    W_OBJECT(GradientSlider)
+  W_OBJECT(GradientSlider)
 public:
-    explicit GradientSlider(QWidget *parent = 0);
-    explicit GradientSlider(Qt::Orientation orientation, QWidget *parent = 0);
-    ~GradientSlider() override;
+  explicit GradientSlider(QWidget* parent = 0);
+  explicit GradientSlider(Qt::Orientation orientation, QWidget* parent = 0);
+  ~GradientSlider() override;
 
-    /// Get the background, it's visible for transparent gradient stops
-    QBrush background() const;
-    /// Set the background, it's visible for transparent gradient stops
-    void setBackground(const QBrush &bg);
+  /// Get the background, it's visible for transparent gradient stops
+  QBrush background() const;
+  /// Set the background, it's visible for transparent gradient stops
+  void setBackground(const QBrush& bg);
 
-    /// Get the vertical spacing.
-    int verticalSpacing() const;
-    /// Set the vertical spacing.
-    void setVerticalSpacing(const int &verticalSpacing);
+  /// Get the vertical spacing.
+  int verticalSpacing() const;
+  /// Set the vertical spacing.
+  void setVerticalSpacing(const int& verticalSpacing);
 
-    /// Get the border pen.
-    QPen border() const;
-    /// Set the border pen.
-    void setBorder(const QPen &border);
+  /// Get the border pen.
+  QPen border() const;
+  /// Set the border pen.
+  void setBorder(const QPen& border);
 
-    /// Get the colors that make up the gradient
-    QGradientStops colors() const;
-    /// Set the colors that make up the gradient
-    void setColors(const QGradientStops &colors);
+  /// Get the colors that make up the gradient
+  QGradientStops colors() const;
+  /// Set the colors that make up the gradient
+  void setColors(const QGradientStops& colors);
 
-    /// Get the gradient
-    QLinearGradient gradient() const;
-    /// Set the gradient
-    void setGradient(const QLinearGradient &gradient);
+  /// Get the gradient
+  QLinearGradient gradient() const;
+  /// Set the gradient
+  void setGradient(const QLinearGradient& gradient);
 
-    /**
-     * \brief Set the first color of the gradient
-     *
-     * If the gradient is currently empty it will create a stop with the given color
-     */
-    void setFirstColor(const QColor &c);
+  /**
+   * \brief Set the first color of the gradient
+   *
+   * If the gradient is currently empty it will create a stop with the given
+   * color
+   */
+  void setFirstColor(const QColor& c);
 
-    /**
-     * \brief Set the last color of the gradient
-     *
-     * If the gradient is has less than two colors,
-     * it will create a stop with the given color
-     */
-    void setLastColor(const QColor &c);
+  /**
+   * \brief Set the last color of the gradient
+   *
+   * If the gradient is has less than two colors,
+   * it will create a stop with the given color
+   */
+  void setLastColor(const QColor& c);
 
-    /**
-     * \brief Get the first color
-     *
-     * \returns QColor() con empty gradient
-     */
-    QColor firstColor() const;
+  /**
+   * \brief Get the first color
+   *
+   * \returns QColor() con empty gradient
+   */
+  QColor firstColor() const;
 
-    /**
-     * \brief Get the last color
-     *
-     * \returns QColor() con empty gradient
-     */
-    QColor lastColor() const;
+  /**
+   * \brief Get the last color
+   *
+   * \returns QColor() con empty gradient
+   */
+  QColor lastColor() const;
 
-    W_PROPERTY(QBrush, background READ background WRITE setBackground)
-    W_PROPERTY(int, verticalSpacing READ verticalSpacing WRITE setVerticalSpacing)
-    W_PROPERTY(QPen, border READ border WRITE setBorder)
-    W_PROPERTY(QLinearGradient, gradient READ gradient WRITE setGradient)
-    W_PROPERTY(QColor, firstColor READ firstColor WRITE setFirstColor)
-    W_PROPERTY(QColor, lastColor READ lastColor WRITE setLastColor)
-    W_PROPERTY(QGradientStops, colors READ colors WRITE setColors)
+  W_PROPERTY(QBrush, background READ background WRITE setBackground)
+  W_PROPERTY(int, verticalSpacing READ verticalSpacing WRITE setVerticalSpacing)
+  W_PROPERTY(QPen, border READ border WRITE setBorder)
+  W_PROPERTY(QLinearGradient, gradient READ gradient WRITE setGradient)
+  W_PROPERTY(QColor, firstColor READ firstColor WRITE setFirstColor)
+  W_PROPERTY(QColor, lastColor READ lastColor WRITE setLastColor)
+  W_PROPERTY(QGradientStops, colors READ colors WRITE setColors)
 
 protected:
-    void paintEvent(QPaintEvent *ev)  override;
+  void paintEvent(QPaintEvent* ev) override;
 
 private:
-    class Private;
-    Private * const p;
+  class Private;
+  Private* const p;
 };
 
 } // namespace color_widgets

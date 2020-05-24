@@ -26,26 +26,28 @@
 
 #include <QAbstractItemDelegate>
 
-namespace color_widgets {
+namespace color_widgets
+{
 
 /**
     Delegate to use a ColorSelector in a color list
 */
 class QCP_EXPORT ColorDelegate final : public QAbstractItemDelegate
 {
-    Q_OBJECT
+  Q_OBJECT
 public:
-    explicit ColorDelegate(QWidget *parent = 0);
+  explicit ColorDelegate(QWidget* parent = 0);
 
-    void paint(QPainter *painter, const QStyleOptionViewItem &option,
-                    const QModelIndex &index) const override;
+  void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index)
+      const override;
 
-    bool editorEvent(QEvent* event,
-                     QAbstractItemModel* model,
-                     const QStyleOptionViewItem & option,
-                     const QModelIndex & index) override;
+  bool editorEvent(
+      QEvent* event,
+      QAbstractItemModel* model,
+      const QStyleOptionViewItem& option,
+      const QModelIndex& index) override;
 
-    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+  QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 };
 
 } // namespace color_widgets

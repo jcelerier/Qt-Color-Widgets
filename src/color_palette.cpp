@@ -20,462 +20,454 @@
  *
  */
 #include "color_palette.hpp"
-#include <cmath>
+
 #include <QFile>
-#include <QTextStream>
+#include <QFileInfo>
 #include <QHash>
 #include <QPainter>
-#include <QFileInfo>
+#include <QTextStream>
+
+#include <cmath>
 #include <wobjectimpl.h>
 W_OBJECT_IMPL(color_widgets::ColorPalette)
-namespace color_widgets {
+namespace color_widgets
+{
 
 class ColorPalette::Private
 {
 public:
-    QVector<QPair<QColor,QString> >   colors;
-    int             columns{};
-    QString         name;
-    QString         fileName;
-    bool            dirty{true};
+  QVector<QPair<QColor, QString>> colors;
+  int columns{};
+  QString name;
+  QString fileName;
+  bool dirty{true};
 
-    bool valid_index(int index)
-    {
-        return index >= 0 && index < colors.size();
-    }
+  bool valid_index(int index) { return index >= 0 && index < colors.size(); }
 };
 
-ColorPalette::ColorPalette(const QString& name)
-    : p ( new Private )
+ColorPalette::ColorPalette(const QString& name) : p(new Private)
 {
-    setName(name);
-    p->columns = 0;
-    p->dirty = false;
+  setName(name);
+  p->columns = 0;
+  p->dirty = false;
 }
 
-ColorPalette::ColorPalette(const QVector<QPair<QColor,QString> >& colors,
-                           const QString& name,
-                           int columns)
+ColorPalette::ColorPalette(
+    const QVector<QPair<QColor, QString>>& colors,
+    const QString& name,
+    int columns)
 {
-    setName(name);
-    setColumns(columns);
-    setColors(colors);
-    p->dirty = false;
+  setName(name);
+  setColumns(columns);
+  setColors(colors);
+  p->dirty = false;
 }
 
-ColorPalette::ColorPalette(const ColorPalette& other)
-    : QObject(), p ( new Private(*other.p) )
-{
-}
+ColorPalette::ColorPalette(const ColorPalette& other) : QObject(), p(new Private(*other.p)) { }
 
 ColorPalette& ColorPalette::operator=(const ColorPalette& other)
 {
-    *p = *other.p;
-    emitUpdate();
-    return *this;
+  *p = *other.p;
+  emitUpdate();
+  return *this;
 }
 
 ColorPalette::~ColorPalette()
 {
-    delete p;
+  delete p;
 }
 
-ColorPalette::ColorPalette(ColorPalette&& other)
-    : QObject(), p ( other.p )
+ColorPalette::ColorPalette(ColorPalette&& other) : QObject(), p(other.p)
 {
-    other.p = nullptr;
+  other.p = nullptr;
 }
 ColorPalette& ColorPalette::operator=(ColorPalette&& other)
 {
-    std::swap(p, other.p);
-    emitUpdate();
-    return *this;
+  std::swap(p, other.p);
+  emitUpdate();
+  return *this;
 }
 
 void ColorPalette::emitUpdate()
 {
-    colorsChanged(p->colors);
-    columnsChanged(p->columns);
-    nameChanged(p->name);
-    fileNameChanged(p->fileName);
-    dirtyChanged(p->dirty);
+  colorsChanged(p->colors);
+  columnsChanged(p->columns);
+  nameChanged(p->name);
+  fileNameChanged(p->fileName);
+  dirtyChanged(p->dirty);
 }
 
 QColor ColorPalette::colorAt(int index) const
 {
-    return p->valid_index(index) ? p->colors[index].first : QColor();
+  return p->valid_index(index) ? p->colors[index].first : QColor();
 }
 
 QString ColorPalette::nameAt(int index) const
 {
-    return p->valid_index(index) ? p->colors[index].second : QString();
+  return p->valid_index(index) ? p->colors[index].second : QString();
 }
 
-QVector<QPair<QColor,QString> > ColorPalette::colors() const
+QVector<QPair<QColor, QString>> ColorPalette::colors() const
 {
-    return p->colors;
+  return p->colors;
 }
 
 int ColorPalette::count() const
 {
-    return p->colors.size();
+  return p->colors.size();
 }
 
 int ColorPalette::columns()
 {
-    return p->columns;
+  return p->columns;
 }
 
 QString ColorPalette::name() const
 {
-    return p->name;
+  return p->name;
 }
 
 void ColorPalette::loadColorTable(const QVector<QRgb>& color_table)
 {
-    p->colors.clear();
-    p->colors.reserve(color_table.size());
-    for ( QRgb c : color_table )
-    {
-        QColor color ( c );
-        color.setAlpha(255);
-        p->colors.push_back(qMakePair(color,QString()));
-    }
-    colorsChanged(p->colors);
-    setDirty(true);
+  p->colors.clear();
+  p->colors.reserve(color_table.size());
+  for (QRgb c : color_table)
+  {
+    QColor color(c);
+    color.setAlpha(255);
+    p->colors.push_back(qMakePair(color, QString()));
+  }
+  colorsChanged(p->colors);
+  setDirty(true);
 }
 
 bool ColorPalette::loadImage(const QImage& image)
 {
-    if ( image.isNull() )
-        return false;
-    setColumns(image.width());
+  if (image.isNull())
+    return false;
+  setColumns(image.width());
 
-    p->colors.clear();
-    p->colors.reserve(image.width()*image.height());
-    for ( int y = 0; y < image.height(); y++ )
+  p->colors.clear();
+  p->colors.reserve(image.width() * image.height());
+  for (int y = 0; y < image.height(); y++)
+  {
+    for (int x = 0; x < image.width(); x++)
     {
-        for ( int x = 0; x < image.width(); x++ )
-        {
-            QColor color ( image.pixel(x, y) );
-            color.setAlpha(255);
-            p->colors.push_back(qMakePair(color,QString()));
-        }
+      QColor color(image.pixel(x, y));
+      color.setAlpha(255);
+      p->colors.push_back(qMakePair(color, QString()));
     }
-    colorsChanged(p->colors);
-    setDirty(true);
-    return true;
+  }
+  colorsChanged(p->colors);
+  setDirty(true);
+  return true;
 }
 
 ColorPalette ColorPalette::fromImage(const QImage& image)
 {
-    ColorPalette p;
-    p.loadImage(image);
-    return p;
+  ColorPalette p;
+  p.loadImage(image);
+  return p;
 }
 
 bool ColorPalette::load(const QString& name)
 {
-    p->fileName = name;
-    p->colors.clear();
-    p->columns = 0;
-    p->dirty = false;
-    p->name = QFileInfo(name).baseName();
+  p->fileName = name;
+  p->colors.clear();
+  p->columns = 0;
+  p->dirty = false;
+  p->name = QFileInfo(name).baseName();
 
-    QFile file(name);
+  QFile file(name);
 
-    if ( !file.open(QFile::ReadOnly|QFile::Text) )
+  if (!file.open(QFile::ReadOnly | QFile::Text))
+  {
+    emitUpdate();
+    return false;
+  }
+
+  QTextStream stream(&file);
+
+  if (stream.readLine() != "GIMP Palette")
+  {
+    emitUpdate();
+    return false;
+  }
+
+  QString line;
+
+  // parse properties
+  QHash<QString, QString> properties;
+  while (!stream.atEnd())
+  {
+    line = stream.readLine();
+    if (line.isEmpty())
+      continue;
+    if (line[0] == '#')
+      break;
+    int colon = line.indexOf(':');
+    if (colon == -1)
+      break;
+    properties[line.left(colon).toLower()] = line.right(line.size() - colon - 1).trimmed();
+  }
+  /// \todo Store extra properties in the palette object
+  setName(properties["name"]);
+  setColumns(properties["columns"].toInt());
+
+  // Skip comments
+  if (!stream.atEnd() && line[0] == '#')
+    while (!stream.atEnd())
     {
-        emitUpdate();
-        return false;
+      qint64 pos = stream.pos();
+      line = stream.readLine();
+      if (!line.isEmpty() && line[0] != '#')
+      {
+        stream.seek(pos);
+        break;
+      }
     }
 
-    QTextStream stream( &file );
+  while (!stream.atEnd())
+  {
+    int r = 0, g = 0, b = 0;
+    stream >> r >> g >> b;
+    line = stream.readLine().trimmed();
+    p->colors.push_back(qMakePair(QColor(r, g, b), line));
+  }
 
-    if ( stream.readLine() != "GIMP Palette" )
-    {
-        emitUpdate();
-        return false;
-    }
+  colorsChanged(p->colors);
+  setDirty(false);
 
-    QString line;
-
-    // parse properties
-    QHash<QString,QString> properties;
-    while( !stream.atEnd() )
-    {
-        line = stream.readLine();
-        if ( line.isEmpty() )
-            continue;
-        if ( line[0] == '#' )
-            break;
-        int colon = line.indexOf(':');
-        if ( colon == -1 )
-            break;
-        properties[line.left(colon).toLower()] =
-            line.right(line.size() - colon - 1).trimmed();
-    }
-    /// \todo Store extra properties in the palette object
-    setName(properties["name"]);
-    setColumns(properties["columns"].toInt());
-
-    // Skip comments
-    if ( !stream.atEnd() && line[0] == '#' )
-        while( !stream.atEnd() )
-        {
-            qint64 pos = stream.pos();
-            line = stream.readLine();
-            if ( !line.isEmpty() && line[0] != '#' )
-            {
-                stream.seek(pos);
-                break;
-            }
-        }
-
-    while( !stream.atEnd() )
-    {
-        int r = 0, g = 0, b = 0;
-        stream >> r >> g >> b;
-        line = stream.readLine().trimmed();
-        p->colors.push_back(qMakePair(QColor(r, g, b), line));
-    }
-
-    colorsChanged(p->colors);
-    setDirty(false);
-
-    return true;
+  return true;
 }
 
 ColorPalette ColorPalette::fromFile(const QString& name)
 {
-    ColorPalette p;
-    p.load(name);
-    return p;
+  ColorPalette p;
+  p.load(name);
+  return p;
 }
 
 bool ColorPalette::save(const QString& filename)
 {
-    setFileName(filename);
-    return save();
+  setFileName(filename);
+  return save();
 }
 
 bool ColorPalette::save()
 {
-    QString filename = p->fileName;
-    if ( filename.isEmpty() )
-    {
-        filename = unnamed(p->name)+".gpl";
-    }
+  QString filename = p->fileName;
+  if (filename.isEmpty())
+  {
+    filename = unnamed(p->name) + ".gpl";
+  }
 
-    QFile file(filename);
-    if ( !file.open(QFile::Text|QFile::WriteOnly) )
-        return false;
-
-    QTextStream stream(&file);
-
-    stream << "GIMP Palette\n";
-    stream << "Name: " << unnamed(p->name) << '\n';
-    if ( p->columns )
-        stream << "Columns: " << p->columns << '\n';
-    /// \todo Options to add comments
-    stream << "#\n";
-
-    for ( int i = 0; i < p->colors.size(); i++ )
-    {
-        stream << qSetFieldWidth(3) << p->colors[i].first.red() << qSetFieldWidth(0) << ' '
-               << qSetFieldWidth(3) << p->colors[i].first.green() << qSetFieldWidth(0) << ' '
-               << qSetFieldWidth(3) << p->colors[i].first.blue() << qSetFieldWidth(0) << '\t'
-               << unnamed(p->colors[i].second) << '\n';
-    }
-
-    if ( !file.error() )
-    {
-        setDirty(false);
-        return true;
-    }
-
+  QFile file(filename);
+  if (!file.open(QFile::Text | QFile::WriteOnly))
     return false;
-}
 
+  QTextStream stream(&file);
+
+  stream << "GIMP Palette\n";
+  stream << "Name: " << unnamed(p->name) << '\n';
+  if (p->columns)
+    stream << "Columns: " << p->columns << '\n';
+  /// \todo Options to add comments
+  stream << "#\n";
+
+  for (int i = 0; i < p->colors.size(); i++)
+  {
+    stream << qSetFieldWidth(3) << p->colors[i].first.red() << qSetFieldWidth(0) << ' '
+           << qSetFieldWidth(3) << p->colors[i].first.green() << qSetFieldWidth(0) << ' '
+           << qSetFieldWidth(3) << p->colors[i].first.blue() << qSetFieldWidth(0) << '\t'
+           << unnamed(p->colors[i].second) << '\n';
+  }
+
+  if (!file.error())
+  {
+    setDirty(false);
+    return true;
+  }
+
+  return false;
+}
 
 QString ColorPalette::fileName() const
 {
-    return p->fileName;
+  return p->fileName;
 }
-
 
 void ColorPalette::setColumns(int columns)
 {
-    if ( columns <= 0 )
-        columns = 0;
+  if (columns <= 0)
+    columns = 0;
 
-    if ( columns != p->columns )
-    {
-        setDirty(true);
-        columnsChanged( p->columns = columns );
-    }
-}
-
-
-void ColorPalette::setColors(const QVector<QPair<QColor,QString> >& colors)
-{
-    p->colors = colors;
+  if (columns != p->columns)
+  {
     setDirty(true);
-    colorsChanged(p->colors);
+    columnsChanged(p->columns = columns);
+  }
 }
 
+void ColorPalette::setColors(const QVector<QPair<QColor, QString>>& colors)
+{
+  p->colors = colors;
+  setDirty(true);
+  colorsChanged(p->colors);
+}
 
 void ColorPalette::setColorAt(int index, const QColor& color)
 {
-    if ( !p->valid_index(index) )
-        return;
+  if (!p->valid_index(index))
+    return;
 
-    p->colors[index].first = color;
+  p->colors[index].first = color;
 
-    setDirty(true);
-    colorChanged(index);
-    colorsUpdated(p->colors);
+  setDirty(true);
+  colorChanged(index);
+  colorsUpdated(p->colors);
 }
 
 void ColorPalette::setColorAt(int index, const QColor& color, const QString& name)
 {
-    if ( !p->valid_index(index) )
-        return;
+  if (!p->valid_index(index))
+    return;
 
-    p->colors[index].first = color;
-    p->colors[index].second = name;
-    setDirty(true);
-    colorChanged(index);
-    colorsUpdated(p->colors);
+  p->colors[index].first = color;
+  p->colors[index].second = name;
+  setDirty(true);
+  colorChanged(index);
+  colorsUpdated(p->colors);
 }
 
 void ColorPalette::setNameAt(int index, const QString& name)
 {
-    if ( !p->valid_index(index) )
-        return;
+  if (!p->valid_index(index))
+    return;
 
-    p->colors[index].second = name;
+  p->colors[index].second = name;
 
-    setDirty(true);
-    colorChanged(index);
-    colorsUpdated(p->colors);
+  setDirty(true);
+  colorChanged(index);
+  colorsUpdated(p->colors);
 }
-
 
 void ColorPalette::appendColor(const QColor& color, const QString& name)
 {
-    p->colors.push_back(qMakePair(color,name));
-    setDirty(true);
-    colorAdded(p->colors.size()-1);
-    colorsUpdated(p->colors);
+  p->colors.push_back(qMakePair(color, name));
+  setDirty(true);
+  colorAdded(p->colors.size() - 1);
+  colorsUpdated(p->colors);
 }
 
 void ColorPalette::insertColor(int index, const QColor& color, const QString& name)
 {
-    if ( index < 0 || index > p->colors.size() )
-        return;
+  if (index < 0 || index > p->colors.size())
+    return;
 
-    p->colors.insert(index, qMakePair(color, name));
+  p->colors.insert(index, qMakePair(color, name));
 
-    setDirty(true);
-    colorAdded(index);
-    colorsUpdated(p->colors);
+  setDirty(true);
+  colorAdded(index);
+  colorsUpdated(p->colors);
 }
 
 void ColorPalette::eraseColor(int index)
 {
-    if ( !p->valid_index(index) )
-        return;
+  if (!p->valid_index(index))
+    return;
 
-    p->colors.remove(index);
+  p->colors.remove(index);
 
-    setDirty(true);
-    colorRemoved(index);
-    colorsUpdated(p->colors);
+  setDirty(true);
+  colorRemoved(index);
+  colorsUpdated(p->colors);
 }
 
 void ColorPalette::setName(const QString& name)
 {
-    setDirty(true);
-    p->name = name;
+  setDirty(true);
+  p->name = name;
 }
 
 void ColorPalette::setFileName(const QString& name)
 {
-    setDirty(true);
-    p->fileName = name;
+  setDirty(true);
+  p->fileName = name;
 }
 
 QString ColorPalette::unnamed(const QString& name) const
 {
-    return name.isEmpty() ? tr("Unnamed") : name;
+  return name.isEmpty() ? tr("Unnamed") : name;
 }
-
 
 QPixmap ColorPalette::preview(const QSize& size, const QColor& background) const
 {
-    if ( !size.isValid() || p->colors.empty() )
-        return QPixmap();
+  if (!size.isValid() || p->colors.empty())
+    return QPixmap();
 
-    QPixmap out( size );
-    out.fill(background);
-    QPainter painter(&out);
+  QPixmap out(size);
+  out.fill(background);
+  QPainter painter(&out);
 
-    int count = p->colors.size();
-    int columns = p->columns;
-    if ( !columns )
-        columns = std::ceil( std::sqrt( count * float(size.width()) / size.height() ) );
-    int rows = std::ceil( float(count) / columns );
-    QSizeF color_size(float(size.width()) / columns, float(size.height()) / rows);
+  int count = p->colors.size();
+  int columns = p->columns;
+  if (!columns)
+    columns = std::ceil(std::sqrt(count * float(size.width()) / size.height()));
+  int rows = std::ceil(float(count) / columns);
+  QSizeF color_size(float(size.width()) / columns, float(size.height()) / rows);
 
-    for ( int y = 0, i = 0; y < rows && i < count; y++ )
+  for (int y = 0, i = 0; y < rows && i < count; y++)
+  {
+    for (int x = 0; x < columns && i < count; x++, i++)
     {
-        for ( int x = 0; x < columns && i < count; x++, i++ )
-        {
-            painter.fillRect(QRectF(x*color_size.width(), y*color_size.height(),
-                             color_size.width(), color_size.height()),
-                             p->colors[i].first
-                            );
-        }
+      painter.fillRect(
+          QRectF(
+              x * color_size.width(),
+              y * color_size.height(),
+              color_size.width(),
+              color_size.height()),
+          p->colors[i].first);
     }
+  }
 
-    return out;
+  return out;
 }
 
 bool ColorPalette::dirty() const
 {
-    return p->dirty;
+  return p->dirty;
 }
 
 void ColorPalette::setDirty(bool dirty)
 {
-    if ( dirty != p->dirty )
-        dirtyChanged( p->dirty = dirty );
+  if (dirty != p->dirty)
+    dirtyChanged(p->dirty = dirty);
 }
 
 QVector<QColor> ColorPalette::onlyColors() const
 {
-    QVector<QColor> out;
-    out.reserve(p->colors.size());
-    for ( int i = 0; i < p->colors.size(); i++ )
-        out.push_back(p->colors[i].first);
-    return out;
+  QVector<QColor> out;
+  out.reserve(p->colors.size());
+  for (int i = 0; i < p->colors.size(); i++)
+    out.push_back(p->colors[i].first);
+  return out;
 }
 
 QVector<QRgb> ColorPalette::colorTable() const
 {
-    QVector<QRgb> out;
-    out.reserve(p->colors.size());
-    for ( const auto& color_pair : p->colors )
-        out.push_back(color_pair.first.rgba());
-    return out;
+  QVector<QRgb> out;
+  out.reserve(p->colors.size());
+  for (const auto& color_pair : p->colors)
+    out.push_back(color_pair.first.rgba());
+  return out;
 }
 
 ColorPalette ColorPalette::fromColorTable(const QVector<QRgb>& table)
 {
-    ColorPalette palette;
-    palette.loadColorTable(table);
-    return palette;
+  ColorPalette palette;
+  palette.loadColorTable(table);
+  return palette;
 }
 
 } // namespace color_widgets

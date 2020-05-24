@@ -24,21 +24,23 @@
 
 #include "color_selector.hpp"
 
-namespace color_widgets {
+namespace color_widgets
+{
 /**
  * \brief A color selector bound to a color reference
  * \todo Maybe this can be removed
  */
 class QCP_EXPORT BoundColorSelector final : public ColorSelector
 {
-    Q_OBJECT
+  Q_OBJECT
 private:
-    QColor* ref;
+  QColor* ref;
+
 public:
-    explicit BoundColorSelector(QColor* reference, QWidget *parent = 0);
+  explicit BoundColorSelector(QColor* reference, QWidget* parent = 0);
 
 private Q_SLOTS:
-    void update_reference(QColor);
+  void update_reference(QColor);
 };
 } // namespace color_widgets
 #endif // BOUND_COLOR_SELECTOR_HPP

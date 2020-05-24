@@ -21,18 +21,19 @@
  */
 #include "bound_color_selector.hpp"
 
-namespace color_widgets {
-
-BoundColorSelector::BoundColorSelector(QColor* reference, QWidget *parent) :
-    ColorSelector(parent), ref(reference)
+namespace color_widgets
 {
-    setColor(*reference);
-    connect(this,SIGNAL(colorChanged(QColor)),SLOT(update_reference(QColor)));
+
+BoundColorSelector::BoundColorSelector(QColor* reference, QWidget* parent)
+    : ColorSelector(parent), ref(reference)
+{
+  setColor(*reference);
+  connect(this, SIGNAL(colorChanged(QColor)), SLOT(update_reference(QColor)));
 }
 
 void BoundColorSelector::update_reference(QColor c)
 {
-    *ref = c;
+  *ref = c;
 }
 
 } // namespace color_widgets

@@ -21,80 +21,76 @@
  *
  */
 #include "hue_slider_plugin.hpp"
+
 #include "hue_slider.hpp"
+
 #include <QtPlugin>
 
-HueSlider_Plugin::HueSlider_Plugin(QObject *parent)
-    : QObject(parent), initialized(false)
+HueSlider_Plugin::HueSlider_Plugin(QObject* parent) : QObject(parent), initialized(false) { }
+
+void HueSlider_Plugin::initialize(QDesignerFormEditorInterface*)
 {
-}
+  if (initialized)
+    return;
 
-
-void HueSlider_Plugin::initialize(QDesignerFormEditorInterface *)
-{
-    if (initialized)
-        return;
-
-    initialized = true;
+  initialized = true;
 }
 
 bool HueSlider_Plugin::isInitialized() const
 {
-    return initialized;
+  return initialized;
 }
 
-QWidget *HueSlider_Plugin::createWidget(QWidget *parent)
+QWidget* HueSlider_Plugin::createWidget(QWidget* parent)
 {
-    return new color_widgets::HueSlider(parent);
+  return new color_widgets::HueSlider(parent);
 }
 
 QString HueSlider_Plugin::name() const
 {
-    return "color_widgets::HueSlider";
+  return "color_widgets::HueSlider";
 }
 
 QString HueSlider_Plugin::group() const
 {
-    return "Color Widgets";
+  return "Color Widgets";
 }
 
 QIcon HueSlider_Plugin::icon() const
 {
-    color_widgets::HueSlider w;
-    w.resize(64,16);
-    QPixmap pix(64,64);
-    pix.fill(Qt::transparent);
-    w.render(&pix,QPoint(0,16));
-    return QIcon(pix);
+  color_widgets::HueSlider w;
+  w.resize(64, 16);
+  QPixmap pix(64, 64);
+  pix.fill(Qt::transparent);
+  w.render(&pix, QPoint(0, 16));
+  return QIcon(pix);
 }
 
 QString HueSlider_Plugin::toolTip() const
 {
-    return "Slider over a hue gradient";
+  return "Slider over a hue gradient";
 }
 
 QString HueSlider_Plugin::whatsThis() const
 {
-    return toolTip();
+  return toolTip();
 }
 
 bool HueSlider_Plugin::isContainer() const
 {
-    return false;
+  return false;
 }
 
 QString HueSlider_Plugin::domXml() const
 {
 
-    return "<ui language=\"c++\">\n"
-           " <widget class=\"color_widgets::HueSlider\" name=\"HueSlider\">\n"
-           " </widget>\n"
-            "</ui>\n";
+  return "<ui language=\"c++\">\n"
+         " <widget class=\"color_widgets::HueSlider\" name=\"HueSlider\">\n"
+         " </widget>\n"
+         "</ui>\n";
 }
 
 QString HueSlider_Plugin::includeFile() const
 {
-    return "hue_slider.hpp";
+  return "hue_slider.hpp";
 }
-
-

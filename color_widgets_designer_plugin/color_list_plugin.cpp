@@ -20,69 +20,67 @@
  *
  */
 #include "color_list_plugin.hpp"
+
 #include "color_list_widget.hpp"
 
-ColorListWidget_Plugin::ColorListWidget_Plugin(QObject *parent) :
-    QObject(parent)
-{
-}
+ColorListWidget_Plugin::ColorListWidget_Plugin(QObject* parent) : QObject(parent) { }
 
-
-void ColorListWidget_Plugin::initialize(QDesignerFormEditorInterface *)
+void ColorListWidget_Plugin::initialize(QDesignerFormEditorInterface*)
 {
-    initialized = true;
+  initialized = true;
 }
 
 bool ColorListWidget_Plugin::isInitialized() const
 {
-    return initialized;
+  return initialized;
 }
 
-QWidget *ColorListWidget_Plugin::createWidget(QWidget *parent)
+QWidget* ColorListWidget_Plugin::createWidget(QWidget* parent)
 {
-    return new color_widgets::ColorListWidget(parent);
+  return new color_widgets::ColorListWidget(parent);
 }
 
 QString ColorListWidget_Plugin::name() const
 {
-    return "color_widgets::ColorListWidget";
+  return "color_widgets::ColorListWidget";
 }
 
 QString ColorListWidget_Plugin::group() const
 {
-    return "Color Widgets";
+  return "Color Widgets";
 }
 
 QIcon ColorListWidget_Plugin::icon() const
 {
-    return QIcon::fromTheme("format-stroke-color");
+  return QIcon::fromTheme("format-stroke-color");
 }
 
 QString ColorListWidget_Plugin::toolTip() const
 {
-    return "An editable list of colors";
+  return "An editable list of colors";
 }
 
 QString ColorListWidget_Plugin::whatsThis() const
 {
-    return toolTip();
+  return toolTip();
 }
 
 bool ColorListWidget_Plugin::isContainer() const
 {
-    return false;
+  return false;
 }
 
 QString ColorListWidget_Plugin::domXml() const
 {
 
-    return "<ui language=\"c++\">\n"
-           " <widget class=\"color_widgets::ColorListWidget\" name=\"ColorListWidget\">\n"
-           " </widget>\n"
-            "</ui>\n";
+  return "<ui language=\"c++\">\n"
+         " <widget class=\"color_widgets::ColorListWidget\" "
+         "name=\"ColorListWidget\">\n"
+         " </widget>\n"
+         "</ui>\n";
 }
 
 QString ColorListWidget_Plugin::includeFile() const
 {
-    return "color_list_widget.hpp";
+  return "color_list_widget.hpp";
 }

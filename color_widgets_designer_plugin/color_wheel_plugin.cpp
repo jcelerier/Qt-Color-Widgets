@@ -20,80 +20,77 @@
  *
  */
 #include "color_wheel_plugin.hpp"
+
 #include "color_wheel.hpp"
 
-ColorWheel_Plugin::ColorWheel_Plugin(QObject *parent) :
-    QObject(parent), initialized(false)
-{
-}
+ColorWheel_Plugin::ColorWheel_Plugin(QObject* parent) : QObject(parent), initialized(false) { }
 
-void ColorWheel_Plugin::initialize(QDesignerFormEditorInterface *)
+void ColorWheel_Plugin::initialize(QDesignerFormEditorInterface*)
 {
-    initialized = true;
+  initialized = true;
 }
 
 bool ColorWheel_Plugin::isInitialized() const
 {
-    return initialized;
+  return initialized;
 }
 
-QWidget *ColorWheel_Plugin::createWidget(QWidget *parent)
+QWidget* ColorWheel_Plugin::createWidget(QWidget* parent)
 {
-    return new color_widgets::ColorWheel(parent);
+  return new color_widgets::ColorWheel(parent);
 }
 
 QString ColorWheel_Plugin::name() const
 {
-    return "color_widgets::ColorWheel";
+  return "color_widgets::ColorWheel";
 }
 
 QString ColorWheel_Plugin::group() const
 {
-    return "Color Widgets";
+  return "Color Widgets";
 }
 
 QIcon ColorWheel_Plugin::icon() const
 {
-    color_widgets::ColorWheel w;
-    w.resize(64,64);
-    w.setWheelWidth(8);
-    QPixmap pix(64,64);
-    w.render(&pix);
-    return QIcon(pix);
+  color_widgets::ColorWheel w;
+  w.resize(64, 64);
+  w.setWheelWidth(8);
+  QPixmap pix(64, 64);
+  w.render(&pix);
+  return QIcon(pix);
 }
 
 QString ColorWheel_Plugin::toolTip() const
 {
-    return "A widget that allows an intuitive selection of HSL parameters for a QColor";
+  return "A widget that allows an intuitive selection of HSL parameters for a "
+         "QColor";
 }
 
 QString ColorWheel_Plugin::whatsThis() const
 {
-    return toolTip();
+  return toolTip();
 }
 
 bool ColorWheel_Plugin::isContainer() const
 {
-    return false;
+  return false;
 }
 
 QString ColorWheel_Plugin::domXml() const
 {
-    return "<ui language=\"c++\">\n"
-           " <widget class=\"color_widgets::ColorWheel\" name=\"colorWheel\">\n"
-           "  <property name=\"sizePolicy\">\n"
-           "   <sizepolicy hsizetype=\"Minimum\" vsizetype=\"Minimum\">\n"
-           "    <horstretch>0</horstretch>\n"
-           "    <verstretch>0</verstretch>\n"
-           "   </sizepolicy>\n"
-           "  </property>\n"
-           " </widget>\n"
-           "</ui>\n";
+  return "<ui language=\"c++\">\n"
+         " <widget class=\"color_widgets::ColorWheel\" name=\"colorWheel\">\n"
+         "  <property name=\"sizePolicy\">\n"
+         "   <sizepolicy hsizetype=\"Minimum\" vsizetype=\"Minimum\">\n"
+         "    <horstretch>0</horstretch>\n"
+         "    <verstretch>0</verstretch>\n"
+         "   </sizepolicy>\n"
+         "  </property>\n"
+         " </widget>\n"
+         "</ui>\n";
 }
 
 QString ColorWheel_Plugin::includeFile() const
 {
-    return "color_wheel.hpp";
+  return "color_wheel.hpp";
 }
-
-

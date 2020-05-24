@@ -21,165 +21,167 @@
  *
  */
 #include "color_preview.hpp"
+
 #include "color_utils.hpp"
 
-#include <QStylePainter>
-#include <QStyleOptionFrame>
-#include <QMouseEvent>
 #include <QDrag>
 #include <QMimeData>
+#include <QMouseEvent>
+#include <QStyleOptionFrame>
+#include <QStylePainter>
+
 #include <wobjectimpl.h>
 
 W_OBJECT_IMPL(color_widgets::ColorPreview)
-namespace color_widgets {
+namespace color_widgets
+{
 
 class ColorPreview::Private
 {
 public:
-    QColor col; ///< color to be viewed
-    QColor comparison; ///< comparison color
-    QBrush back;///< Background brush, visible on a transparent color
-    DisplayMode display_mode; ///< How the color(s) are to be shown
+  QColor col;               ///< color to be viewed
+  QColor comparison;        ///< comparison color
+  QBrush back;              ///< Background brush, visible on a transparent color
+  DisplayMode display_mode; ///< How the color(s) are to be shown
 
-    Private() : col(Qt::red), back(Qt::darkGray, Qt::DiagCrossPattern), display_mode(NoAlpha)
-    {}
+  Private() : col(Qt::red), back(Qt::darkGray, Qt::DiagCrossPattern), display_mode(NoAlpha) { }
 };
 
-ColorPreview::ColorPreview(QWidget *parent) :
-    QWidget(parent), p(new Private)
+ColorPreview::ColorPreview(QWidget* parent) : QWidget(parent), p(new Private)
 {
-    p->back.setTexture(detail::alpha_pixmap());
+  p->back.setTexture(detail::alpha_pixmap());
 }
 
 ColorPreview::~ColorPreview()
 {
-    delete p;
+  delete p;
 }
 
-void ColorPreview::setBackground(const QBrush &bk)
+void ColorPreview::setBackground(const QBrush& bk)
 {
-    p->back = bk;
-    update();
+  p->back = bk;
+  update();
 }
 
 QBrush ColorPreview::background() const
 {
-    return p->back;
+  return p->back;
 }
 
 ColorPreview::DisplayMode ColorPreview::displayMode() const
 {
-    return p->display_mode;
+  return p->display_mode;
 }
 
 void ColorPreview::setDisplayMode(DisplayMode m)
 {
-    p->display_mode = m;
-    update();
+  p->display_mode = m;
+  update();
 }
 
 QColor ColorPreview::color() const
 {
-    return p->col;
+  return p->col;
 }
 
 QColor ColorPreview::comparisonColor() const
 {
-    return p->comparison;
+  return p->comparison;
 }
 
 QSize ColorPreview::sizeHint() const
 {
-    return QSize(24,24);
+  return QSize(24, 24);
 }
 
-void ColorPreview::paint(QPainter &painter, QRect rect) const
+void ColorPreview::paint(QPainter& painter, QRect rect) const
 {
-    QColor c1, c2;
-    switch(p->display_mode) {
+  QColor c1, c2;
+  switch (p->display_mode)
+  {
     case NoAlpha:
-        c1 = c2 = p->col.rgb();
-        break;
+      c1 = c2 = p->col.rgb();
+      break;
     case AllAlpha:
-        c1 = c2 = p->col;
-        break;
+      c1 = c2 = p->col;
+      break;
     case SplitAlpha:
-        c1 = p->col.rgb();
-        c2 = p->col;
-        break;
+      c1 = p->col.rgb();
+      c2 = p->col;
+      break;
     case SplitColor:
-        c1 = p->comparison;
-        c2 = p->col;
-        break;
-    }
+      c1 = p->comparison;
+      c2 = p->col;
+      break;
+  }
 
-    QStyleOptionFrame panel;
-    panel.initFrom(this);
-    panel.lineWidth = 2;
-    panel.midLineWidth = 0;
-    panel.state |= QStyle::State_Sunken;
-    style()->drawPrimitive(QStyle::PE_Frame, &panel, &painter, this);
-    QRect r = style()->subElementRect(QStyle::SE_FrameContents, &panel, this);
-    painter.setClipRect(r);
+  QStyleOptionFrame panel;
+  panel.initFrom(this);
+  panel.lineWidth = 2;
+  panel.midLineWidth = 0;
+  panel.state |= QStyle::State_Sunken;
+  style()->drawPrimitive(QStyle::PE_Frame, &panel, &painter, this);
+  QRect r = style()->subElementRect(QStyle::SE_FrameContents, &panel, this);
+  painter.setClipRect(r);
 
-    if ( c1.alpha() < 255 || c2.alpha() < 255 )
-        painter.fillRect(0, 0, rect.width(), rect.height(), p->back);
+  if (c1.alpha() < 255 || c2.alpha() < 255)
+    painter.fillRect(0, 0, rect.width(), rect.height(), p->back);
 
-    int w = rect.width() / 2;
-    int h = rect.height();
-    painter.fillRect(0, 0, w, h, c1);
-    painter.fillRect(w, 0, w, h, c2);
+  int w = rect.width() / 2;
+  int h = rect.height();
+  painter.fillRect(0, 0, w, h, c1);
+  painter.fillRect(w, 0, w, h, c2);
 }
 
-void ColorPreview::setColor(const QColor &c)
+void ColorPreview::setColor(const QColor& c)
 {
-    p->col = c;
-    update();
-    colorChanged(c);
+  p->col = c;
+  update();
+  colorChanged(c);
 }
 
-void ColorPreview::setComparisonColor(const QColor &c)
+void ColorPreview::setComparisonColor(const QColor& c)
 {
-    p->comparison = c;
-    update();
+  p->comparison = c;
+  update();
 }
 
-void ColorPreview::paintEvent(QPaintEvent *)
+void ColorPreview::paintEvent(QPaintEvent*)
 {
-    QStylePainter painter(this);
+  QStylePainter painter(this);
 
-    paint(painter, geometry());
+  paint(painter, geometry());
 }
 
-void ColorPreview::resizeEvent(QResizeEvent *)
+void ColorPreview::resizeEvent(QResizeEvent*)
 {
-    update();
+  update();
 }
 
-void ColorPreview::mouseReleaseEvent(QMouseEvent * ev)
+void ColorPreview::mouseReleaseEvent(QMouseEvent* ev)
 {
-    if ( QRect(QPoint(0,0),size()).contains(ev->pos()) )
-        clicked();
+  if (QRect(QPoint(0, 0), size()).contains(ev->pos()))
+    clicked();
 }
 
-void ColorPreview::mouseMoveEvent(QMouseEvent *ev)
+void ColorPreview::mouseMoveEvent(QMouseEvent* ev)
 {
 
-    if ( ev->buttons() &Qt::LeftButton && !QRect(QPoint(0,0),size()).contains(ev->pos()) )
-    {
-        QMimeData *data = new QMimeData;
+  if (ev->buttons() & Qt::LeftButton && !QRect(QPoint(0, 0), size()).contains(ev->pos()))
+  {
+    QMimeData* data = new QMimeData;
 
-        data->setColorData(p->col);
+    data->setColorData(p->col);
 
-        QDrag* drag = new QDrag(this);
-        drag->setMimeData(data);
+    QDrag* drag = new QDrag(this);
+    drag->setMimeData(data);
 
-        QPixmap preview(24,24);
-        preview.fill(p->col);
-        drag->setPixmap(preview);
+    QPixmap preview(24, 24);
+    preview.fill(p->col);
+    drag->setPixmap(preview);
 
-        drag->exec();
-    }
+    drag->exec();
+  }
 }
 
 } // namespace color_widgets

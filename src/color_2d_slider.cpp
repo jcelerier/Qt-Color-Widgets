@@ -20,246 +20,274 @@
  *
  */
 #include "color_2d_slider.hpp"
+
 #include "color_utils.hpp"
+
 #include <QImage>
-#include <QPainter>
 #include <QMouseEvent>
+#include <QPainter>
 #include <QResizeEvent>
 
-namespace color_widgets {
+namespace color_widgets
+{
 
 class Color2DSlider::Private
 {
 public:
-    qreal hue = 1, sat = 1, val = 1;
-    Component comp_x = Saturation;
-    Component comp_y = Value;
-    QImage square;
+  qreal hue = 1, sat = 1, val = 1;
+  Component comp_x = Saturation;
+  Component comp_y = Value;
+  QImage square;
 
-    qreal PixHue(float x, float y)
+  qreal PixHue(float x, float y)
+  {
+    if (comp_x == Hue)
+      return x;
+    if (comp_y == Hue)
+      return y;
+    return hue;
+  }
+
+  qreal PixSat(float x, float y)
+  {
+    if (comp_x == Saturation)
+      return x;
+    if (comp_y == Saturation)
+      return y;
+    return sat;
+  }
+
+  qreal PixVal(float x, float y)
+  {
+    if (comp_x == Value)
+      return x;
+    if (comp_y == Value)
+      return y;
+    return val;
+  }
+
+  void renderSquare(const QSize& size)
+  {
+    square = QImage(size, QImage::Format_RGB32);
+
+    for (int y = 0; y < size.height(); ++y)
     {
-        if ( comp_x == Hue )
-            return x;
-        if ( comp_y == Hue )
-            return y;
-        return hue;
+      qreal yfloat = 1 - qreal(y) / size.height();
+      for (int x = 0; x < size.width(); ++x)
+      {
+        qreal xfloat = qreal(x) / size.width();
+        square.setPixel(
+            x,
+            y,
+            QColor::fromHsvF(
+                PixHue(xfloat, yfloat), PixSat(xfloat, yfloat), PixVal(xfloat, yfloat))
+                .rgb());
+      }
     }
+  }
 
-    qreal PixSat(float x, float y)
+  QPointF selectorPos(const QSize& size)
+  {
+    QPointF pt;
+    switch (comp_x)
     {
-        if ( comp_x == Saturation )
-            return x;
-        if ( comp_y == Saturation )
-            return y;
-        return sat;
+      case Hue:
+        pt.setX(size.width() * hue);
+        break;
+      case Saturation:
+        pt.setX(size.width() * sat);
+        break;
+      case Value:
+        pt.setX(size.width() * val);
+        break;
     }
-
-    qreal PixVal(float x, float y)
+    switch (comp_y)
     {
-        if ( comp_x == Value )
-            return x;
-        if ( comp_y == Value )
-            return y;
-        return val;
+      case Hue:
+        pt.setY(size.height() * (1 - hue));
+        break;
+      case Saturation:
+        pt.setY(size.height() * (1 - sat));
+        break;
+      case Value:
+        pt.setY(size.height() * (1 - val));
+        break;
     }
+    return pt;
+  }
 
-    void renderSquare(const QSize& size)
+  void setColorFromPos(const QPoint& pt, const QSize& size)
+  {
+    QPointF ptfloat(
+        qBound(0.0, qreal(pt.x()) / size.width(), 1.0),
+        qBound(0.0, 1 - qreal(pt.y()) / size.height(), 1.0));
+    switch (comp_x)
     {
-        square = QImage(size, QImage::Format_RGB32);
-
-        for ( int y = 0; y < size.height(); ++y )
-        {
-            qreal yfloat = 1 - qreal(y) / size.height();
-            for ( int x = 0; x < size.width(); ++x )
-            {
-                qreal xfloat = qreal(x) / size.width();
-                square.setPixel( x, y, QColor::fromHsvF(
-                    PixHue(xfloat, yfloat),
-                    PixSat(xfloat, yfloat),
-                    PixVal(xfloat, yfloat)
-                ).rgb());
-            }
-        }
+      case Hue:
+        hue = ptfloat.x();
+        break;
+      case Saturation:
+        sat = ptfloat.x();
+        break;
+      case Value:
+        val = ptfloat.x();
+        break;
     }
-
-    QPointF selectorPos(const QSize& size)
+    switch (comp_y)
     {
-        QPointF pt;
-        switch ( comp_x )
-        {
-            case Hue:       pt.setX(size.width()*hue); break;
-            case Saturation:pt.setX(size.width()*sat); break;
-            case Value:     pt.setX(size.width()*val); break;
-        }
-        switch ( comp_y )
-        {
-            case Hue:       pt.setY(size.height()*(1-hue)); break;
-            case Saturation:pt.setY(size.height()*(1-sat)); break;
-            case Value:     pt.setY(size.height()*(1-val)); break;
-        }
-        return pt;
+      case Hue:
+        hue = ptfloat.y();
+        break;
+      case Saturation:
+        sat = ptfloat.y();
+        break;
+      case Value:
+        val = ptfloat.y();
+        break;
     }
-
-    void setColorFromPos(const QPoint& pt, const QSize& size)
-    {
-        QPointF ptfloat(
-            qBound(0.0, qreal(pt.x()) / size.width(), 1.0),
-            qBound(0.0, 1 - qreal(pt.y()) / size.height(), 1.0)
-        );
-        switch ( comp_x )
-        {
-            case Hue:       hue = ptfloat.x(); break;
-            case Saturation:sat = ptfloat.x(); break;
-            case Value:     val = ptfloat.x(); break;
-        }
-        switch ( comp_y )
-        {
-            case Hue:       hue = ptfloat.y(); break;
-            case Saturation:sat = ptfloat.y(); break;
-            case Value:     val = ptfloat.y(); break;
-        }
-    }
+  }
 };
 
-Color2DSlider::Color2DSlider(QWidget* parent)
-    : QWidget(parent), p(new Private)
+Color2DSlider::Color2DSlider(QWidget* parent) : QWidget(parent), p(new Private)
 {
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 }
 
 Color2DSlider::~Color2DSlider()
 {
-    delete p;
+  delete p;
 }
 
 QColor Color2DSlider::color() const
 {
-    return QColor::fromHsvF(p->hue, p->sat, p->val);
+  return QColor::fromHsvF(p->hue, p->sat, p->val);
 }
 
 QSize Color2DSlider::sizeHint() const
 {
-    return {128, 128};
+  return {128, 128};
 }
 
 qreal Color2DSlider::hue() const
 {
-    return p->hue;
+  return p->hue;
 }
 
 qreal Color2DSlider::saturation() const
 {
-    return p->sat;
+  return p->sat;
 }
 
 qreal Color2DSlider::value() const
 {
-    return p->val;
+  return p->val;
 }
 
 Color2DSlider::Component Color2DSlider::componentX() const
 {
-    return p->comp_x;
+  return p->comp_x;
 }
 
 Color2DSlider::Component Color2DSlider::componentY() const
 {
-    return p->comp_y;
+  return p->comp_y;
 }
 
 void Color2DSlider::setColor(const QColor& c)
 {
-    p->hue = c.hsvHueF();
-    p->sat = c.saturationF();
-    p->val = c.valueF();
-    p->renderSquare(size());
-    update();
-    colorChanged(color());
+  p->hue = c.hsvHueF();
+  p->sat = c.saturationF();
+  p->val = c.valueF();
+  p->renderSquare(size());
+  update();
+  colorChanged(color());
 }
 
 void Color2DSlider::setHue(qreal h)
 {
-    p->hue = h;
-    p->renderSquare(size());
-    update();
-    colorChanged(color());
+  p->hue = h;
+  p->renderSquare(size());
+  update();
+  colorChanged(color());
 }
 
 void Color2DSlider::setSaturation(qreal s)
 {
-    p->sat = s;
-    p->renderSquare(size());
-    update();
-    colorChanged(color());
+  p->sat = s;
+  p->renderSquare(size());
+  update();
+  colorChanged(color());
 }
 
 void Color2DSlider::setValue(qreal v)
 {
-    p->val = v;
-    p->renderSquare(size());
-    update();
-    colorChanged(color());
+  p->val = v;
+  p->renderSquare(size());
+  update();
+  colorChanged(color());
 }
 
 void Color2DSlider::setComponentX(Color2DSlider::Component componentX)
 {
-    if ( componentX != p->comp_x )
-    {
-        p->comp_x = componentX;
-        p->renderSquare(size());
-        update();
-        componentXChanged(p->comp_x);
-    }
+  if (componentX != p->comp_x)
+  {
+    p->comp_x = componentX;
+    p->renderSquare(size());
+    update();
+    componentXChanged(p->comp_x);
+  }
 }
 
 void Color2DSlider::setComponentY(Color2DSlider::Component componentY)
 {
-    if ( componentY != p->comp_y )
-    {
-        p->comp_y = componentY;
-        p->renderSquare(size());
-        update();
-        componentXChanged(p->comp_y);
-    }
+  if (componentY != p->comp_y)
+  {
+    p->comp_y = componentY;
+    p->renderSquare(size());
+    update();
+    componentXChanged(p->comp_y);
+  }
 }
 
 void Color2DSlider::paintEvent(QPaintEvent*)
 {
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.drawImage(0,0,p->square);
+  QPainter painter(this);
+  painter.setRenderHint(QPainter::Antialiasing);
+  painter.drawImage(0, 0, p->square);
 
-    painter.setPen(QPen(p->val > 0.5 ? Qt::black : Qt::white, 3));
-    painter.setBrush(Qt::NoBrush);
-    painter.drawEllipse(p->selectorPos(size()), color_widgets::detail::selector_radius, color_widgets::detail::selector_radius);
+  painter.setPen(QPen(p->val > 0.5 ? Qt::black : Qt::white, 3));
+  painter.setBrush(Qt::NoBrush);
+  painter.drawEllipse(
+      p->selectorPos(size()),
+      color_widgets::detail::selector_radius,
+      color_widgets::detail::selector_radius);
 }
 
 void Color2DSlider::mousePressEvent(QMouseEvent* event)
 {
-    p->setColorFromPos(event->pos(), size());
-    colorChanged(color());
-    update();
+  p->setColorFromPos(event->pos(), size());
+  colorChanged(color());
+  update();
 }
 
 void Color2DSlider::mouseMoveEvent(QMouseEvent* event)
 {
-    p->setColorFromPos(event->pos(), size());
-    colorChanged(color());
-    update();
+  p->setColorFromPos(event->pos(), size());
+  colorChanged(color());
+  update();
 }
 
 void Color2DSlider::mouseReleaseEvent(QMouseEvent* event)
 {
-    p->setColorFromPos(event->pos(), size());
-    colorChanged(color());
-    update();
+  p->setColorFromPos(event->pos(), size());
+  colorChanged(color());
+  update();
 }
 
 void Color2DSlider::resizeEvent(QResizeEvent* event)
 {
-    p->renderSquare(event->size());
-    update();
+  p->renderSquare(event->size());
+  update();
 }
-
 
 } // namespace color_widgets

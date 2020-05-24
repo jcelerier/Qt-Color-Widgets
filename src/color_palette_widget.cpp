@@ -20,368 +20,377 @@
  *
  */
 #include "color_palette_widget.hpp"
-#include "ui_color_palette_widget.h"
+
 #include "color_dialog.hpp"
-#include <QInputDialog>
+#include "ui_color_palette_widget.h"
+
 #include <QFileDialog>
-#include <QMessageBox>
 #include <QImageReader>
+#include <QInputDialog>
+#include <QMessageBox>
+
 #include <wobjectimpl.h>
 
 W_OBJECT_IMPL(color_widgets::ColorPaletteWidget)
-namespace color_widgets {
+namespace color_widgets
+{
 
 class ColorPaletteWidget::Private : public Ui::ColorPaletteWidget
 {
 public:
-    ColorPaletteModel* model = nullptr;
-    bool read_only = false;
+  ColorPaletteModel* model = nullptr;
+  bool read_only = false;
 
-    bool hasSelectedPalette()
+  bool hasSelectedPalette() { return model && palette_list->currentIndex() != -1; }
+
+  const ColorPalette& selectedPalette() { return model->palette(palette_list->currentIndex()); }
+
+  void addPalette(ColorPalette& palette)
+  {
+    bool save = false;
+    // Save palettes in the savePath
+    /// \todo This currently breaks opening the right directory
+    /// ie: the one containing the original file.
+    if (!palette.fileName().isEmpty())
     {
-        return model && palette_list->currentIndex() != -1;
+      QFileInfo file(palette.fileName());
+      if (file.dir().canonicalPath() != QDir(model->savePath()).canonicalPath())
+      {
+        palette.setFileName(QString());
+        save = true;
+      }
+    }
+    model->addPalette(palette, save);
+    palette_list->setCurrentIndex(model->count() - 1);
+  }
+
+  bool openImage(const QString& file)
+  {
+    QImage image(file);
+    if (!image.isNull())
+    {
+      ColorPalette palette;
+      palette.loadImage(image);
+      palette.setName(QFileInfo(file).baseName());
+      palette.setFileName(file + ".gpl");
+      addPalette(palette);
+      return true;
+    }
+    return false;
+  }
+
+  bool openGpl(const QString& file)
+  {
+    int existing = model->indexFromFile(file);
+    if (existing != -1)
+    {
+      palette_list->setCurrentIndex(existing);
+      return true;
     }
 
-    const ColorPalette& selectedPalette()
+    ColorPalette palette;
+    if (palette.load(file))
     {
-        return model->palette(palette_list->currentIndex());
+      addPalette(palette);
+      return true;
     }
 
-    void addPalette(ColorPalette& palette)
-    {
-        bool save = false;
-        // Save palettes in the savePath
-        /// \todo This currently breaks opening the right directory
-        /// ie: the one containing the original file.
-        if ( !palette.fileName().isEmpty() )
-        {
-            QFileInfo file(palette.fileName());
-            if ( file.dir().canonicalPath() != QDir(model->savePath()).canonicalPath() )
-            {
-                palette.setFileName(QString());
-                save = true;
-            }
-        }
-        model->addPalette(palette, save);
-        palette_list->setCurrentIndex(model->count()-1);
-    }
+    return false;
+  }
 
-    bool openImage(const QString& file)
-    {
-        QImage image(file);
-        if ( !image.isNull() )
-        {
-            ColorPalette palette;
-            palette.loadImage(image);
-            palette.setName(QFileInfo(file).baseName());
-            palette.setFileName(file+".gpl");
-            addPalette(palette);
-            return true;
-        }
-        return false;
-    }
-
-    bool openGpl(const QString& file)
-    {
-        int existing = model->indexFromFile(file);
-        if ( existing != -1 )
-        {
-            palette_list->setCurrentIndex(existing);
-            return true;
-        }
-
-        ColorPalette palette;
-        if ( palette.load(file) )
-        {
-            addPalette(palette);
-            return true;
-        }
-
-        return false;
-    }
-
-    bool openPalette(const QString& file, int type)
-    {
-        if ( type == 1 )
-            return openImage(file);
-        return openGpl(file);
-    }
+  bool openPalette(const QString& file, int type)
+  {
+    if (type == 1)
+      return openImage(file);
+    return openGpl(file);
+  }
 };
 
-
-ColorPaletteWidget::ColorPaletteWidget(QWidget* parent)
-    : QWidget(parent), p(new Private)
+ColorPaletteWidget::ColorPaletteWidget(QWidget* parent) : QWidget(parent), p(new Private)
 {
-    p->setupUi(this);
+  p->setupUi(this);
 
-    // Connext Swatch signals
-    connect(p->swatch, &Swatch::colorSizeChanged, this, &ColorPaletteWidget::colorSizeChanged);
-    connect(p->swatch, &Swatch::colorSizePolicyChanged, this, &ColorPaletteWidget::colorSizePolicyChanged);
-    connect(p->swatch, &Swatch::forcedRowsChanged, this, &ColorPaletteWidget::forcedRowsChanged);
-    connect(p->swatch, &Swatch::forcedColumnsChanged, this, &ColorPaletteWidget::forcedColumnsChanged);
-    connect(p->swatch, &Swatch::colorSelected,
-            this, &ColorPaletteWidget::currentColorChanged);
-    connect(p->swatch, &Swatch::selectedChanged,
-            this, &ColorPaletteWidget::selectedChanged);
-    connect(p->swatch, &Swatch::borderChanged, this, &ColorPaletteWidget::borderChanged);
+  // Connext Swatch signals
+  connect(p->swatch, &Swatch::colorSizeChanged, this, &ColorPaletteWidget::colorSizeChanged);
+  connect(
+      p->swatch,
+      &Swatch::colorSizePolicyChanged,
+      this,
+      &ColorPaletteWidget::colorSizePolicyChanged);
+  connect(p->swatch, &Swatch::forcedRowsChanged, this, &ColorPaletteWidget::forcedRowsChanged);
+  connect(
+      p->swatch, &Swatch::forcedColumnsChanged, this, &ColorPaletteWidget::forcedColumnsChanged);
+  connect(p->swatch, &Swatch::colorSelected, this, &ColorPaletteWidget::currentColorChanged);
+  connect(p->swatch, &Swatch::selectedChanged, this, &ColorPaletteWidget::selectedChanged);
+  connect(p->swatch, &Swatch::borderChanged, this, &ColorPaletteWidget::borderChanged);
 
-    connect(&p->swatch->palette(), &ColorPalette::dirtyChanged, p->button_palette_save, &QWidget::setEnabled);
-    connect(&p->swatch->palette(), &ColorPalette::dirtyChanged, p->button_palette_revert, &QWidget::setEnabled);
+  connect(
+      &p->swatch->palette(),
+      &ColorPalette::dirtyChanged,
+      p->button_palette_save,
+      &QWidget::setEnabled);
+  connect(
+      &p->swatch->palette(),
+      &ColorPalette::dirtyChanged,
+      p->button_palette_revert,
+      &QWidget::setEnabled);
 
-    connect(p->palette_list, (void (QComboBox::*)(int))&QComboBox::currentIndexChanged,
-            this, &ColorPaletteWidget::currentRowChanged);
+  connect(
+      p->palette_list,
+      (void (QComboBox::*)(int)) & QComboBox::currentIndexChanged,
+      this,
+      &ColorPaletteWidget::currentRowChanged);
 
-    // Buttons changing the colors in the current palette
-    connect(p->button_color_add, &QAbstractButton::clicked, [this](){
-        if ( !p->read_only && p->hasSelectedPalette() )
-        {
-            ColorDialog dialog(this);
-            dialog.setAlphaEnabled(false);
-            if ( p->swatch->selected() != -1 )
-                dialog.setColor(p->swatch->selectedColor());
-            if ( dialog.exec() )
-            {
-                p->swatch->palette().appendColor(dialog.color());
-                p->swatch->setSelected(p->swatch->palette().count()-1);
-            }
-        }
-    });
-    connect(p->button_color_remove, &QAbstractButton::clicked, p->swatch, &Swatch::removeSelected);
+  // Buttons changing the colors in the current palette
+  connect(p->button_color_add, &QAbstractButton::clicked, [this]() {
+    if (!p->read_only && p->hasSelectedPalette())
+    {
+      ColorDialog dialog(this);
+      dialog.setAlphaEnabled(false);
+      if (p->swatch->selected() != -1)
+        dialog.setColor(p->swatch->selectedColor());
+      if (dialog.exec())
+      {
+        p->swatch->palette().appendColor(dialog.color());
+        p->swatch->setSelected(p->swatch->palette().count() - 1);
+      }
+    }
+  });
+  connect(p->button_color_remove, &QAbstractButton::clicked, p->swatch, &Swatch::removeSelected);
 
-    // Buttons modifying the current palette file
-    connect(p->button_palette_delete, &QAbstractButton::clicked, [this]() {
-        if ( !p->read_only && p->hasSelectedPalette() )
-            p->model->removePalette(p->palette_list->currentIndex());
-    });
-    connect(p->button_palette_save, &QAbstractButton::clicked, [this](){
-        if ( !p->read_only && p->hasSelectedPalette() && p->swatch->palette().dirty() )
-            if ( p->model->updatePalette( p->palette_list->currentIndex(), p->swatch->palette() ) )
-            {
-                p->swatch->palette().setDirty(false);
-            }
-            /// \todo else ask for a file name (?)
-    });
-    connect(p->button_palette_revert, &QAbstractButton::clicked, [this](){
-        if ( p->hasSelectedPalette() )
-        {
-             p->swatch->setPalette(p->selectedPalette());
-        }
-    });
+  // Buttons modifying the current palette file
+  connect(p->button_palette_delete, &QAbstractButton::clicked, [this]() {
+    if (!p->read_only && p->hasSelectedPalette())
+      p->model->removePalette(p->palette_list->currentIndex());
+  });
+  connect(p->button_palette_save, &QAbstractButton::clicked, [this]() {
+    if (!p->read_only && p->hasSelectedPalette() && p->swatch->palette().dirty())
+      if (p->model->updatePalette(p->palette_list->currentIndex(), p->swatch->palette()))
+      {
+        p->swatch->palette().setDirty(false);
+      }
+    /// \todo else ask for a file name (?)
+  });
+  connect(p->button_palette_revert, &QAbstractButton::clicked, [this]() {
+    if (p->hasSelectedPalette())
+    {
+      p->swatch->setPalette(p->selectedPalette());
+    }
+  });
 
-    // Buttons creating new palettes
-    connect(p->button_palette_duplicate, &QAbstractButton::clicked, [this](){
-        if ( p->hasSelectedPalette() )
-        {
-            ColorPalette new_palette = p->selectedPalette();
-            new_palette.setFileName(QString());
-            bool ok = false;
-            QString name = QInputDialog::getText(this, tr("New Palette"),
-                tr("Name"), QLineEdit::Normal, new_palette.name(), &ok);
-            if ( ok )
-            {
-                new_palette.setName(name);
-                p->model->addPalette(new_palette);
-                p->palette_list->setCurrentIndex(p->model->count()-1);
-            }
-        }
-    });
-    /// \todo Show a dialog that asks for the number of columns (?)
-    connect(p->button_palette_new, &QAbstractButton::clicked, [this](){
-        if ( p->hasSelectedPalette() )
-        {
-            bool ok = false;
-            QString name = QInputDialog::getText(this, tr("New Palette"),
-                tr("Name"), QLineEdit::Normal, QString(), &ok);
-            if ( ok )
-            {
-                ColorPalette new_palette(name);
-                p->model->addPalette(new_palette);
-                p->palette_list->setCurrentIndex(p->model->count()-1);
-            }
-        }
-    });
+  // Buttons creating new palettes
+  connect(p->button_palette_duplicate, &QAbstractButton::clicked, [this]() {
+    if (p->hasSelectedPalette())
+    {
+      ColorPalette new_palette = p->selectedPalette();
+      new_palette.setFileName(QString());
+      bool ok = false;
+      QString name = QInputDialog::getText(
+          this, tr("New Palette"), tr("Name"), QLineEdit::Normal, new_palette.name(), &ok);
+      if (ok)
+      {
+        new_palette.setName(name);
+        p->model->addPalette(new_palette);
+        p->palette_list->setCurrentIndex(p->model->count() - 1);
+      }
+    }
+  });
+  /// \todo Show a dialog that asks for the number of columns (?)
+  connect(p->button_palette_new, &QAbstractButton::clicked, [this]() {
+    if (p->hasSelectedPalette())
+    {
+      bool ok = false;
+      QString name = QInputDialog::getText(
+          this, tr("New Palette"), tr("Name"), QLineEdit::Normal, QString(), &ok);
+      if (ok)
+      {
+        ColorPalette new_palette(name);
+        p->model->addPalette(new_palette);
+        p->palette_list->setCurrentIndex(p->model->count() - 1);
+      }
+    }
+  });
 
-    QString image_formats;
-    Q_FOREACH(QByteArray ba, QImageReader::supportedImageFormats())
-        image_formats += " *."+QString(ba);
+  QString image_formats;
+  Q_FOREACH (QByteArray ba, QImageReader::supportedImageFormats())
+    image_formats += " *." + QString(ba);
 
-    connect(p->button_palette_open, &QAbstractButton::clicked, [this, image_formats](){
-        if ( p->model )
-        {
-            QString default_dir;
-            if ( p->hasSelectedPalette() )
-            {
-                const ColorPalette& palette = p->selectedPalette();
-                if ( !palette.fileName().isEmpty() )
-                    default_dir = QFileInfo(palette.fileName()).dir().path();
-            }
+  connect(p->button_palette_open, &QAbstractButton::clicked, [this, image_formats]() {
+    if (p->model)
+    {
+      QString default_dir;
+      if (p->hasSelectedPalette())
+      {
+        const ColorPalette& palette = p->selectedPalette();
+        if (!palette.fileName().isEmpty())
+          default_dir = QFileInfo(palette.fileName()).dir().path();
+      }
 
-            QStringList file_formats = QStringList()
-                << tr("GIMP Palettes (*.gpl)")
-                << tr("Palette Image (%1)").arg(image_formats)
-                << tr("All Files (*)");
-            QFileDialog open_dialog(this, tr("Open Palette"), default_dir);
-            open_dialog.setFileMode(QFileDialog::ExistingFile);
-            open_dialog.setAcceptMode(QFileDialog::AcceptOpen);
-            open_dialog.setNameFilters(file_formats);
+      QStringList file_formats = QStringList() << tr("GIMP Palettes (*.gpl)")
+                                               << tr("Palette Image (%1)").arg(image_formats)
+                                               << tr("All Files (*)");
+      QFileDialog open_dialog(this, tr("Open Palette"), default_dir);
+      open_dialog.setFileMode(QFileDialog::ExistingFile);
+      open_dialog.setAcceptMode(QFileDialog::AcceptOpen);
+      open_dialog.setNameFilters(file_formats);
 
-            if ( !open_dialog.exec() )
-                return;
+      if (!open_dialog.exec())
+        return;
 
-            int type = file_formats.indexOf(open_dialog.selectedNameFilter());
-            QString file_name = open_dialog.selectedFiles()[0];
+      int type = file_formats.indexOf(open_dialog.selectedNameFilter());
+      QString file_name = open_dialog.selectedFiles()[0];
 
-            if ( !p->openPalette( file_name, type ) )
-            {
-                QMessageBox::warning(this, tr("Open Palette"),
-                    tr("Failed to load the palette file\n%1").arg(file_name));
-            }
-        }
-    });
+      if (!p->openPalette(file_name, type))
+      {
+        QMessageBox::warning(
+            this, tr("Open Palette"), tr("Failed to load the palette file\n%1").arg(file_name));
+      }
+    }
+  });
 }
 
 ColorPaletteWidget::~ColorPaletteWidget() = default;
 
 ColorPaletteModel* ColorPaletteWidget::model() const
 {
-    return p->model;
+  return p->model;
 }
 
 const ColorPalette& ColorPaletteWidget::currentPalette() const
 {
-    return p->swatch->palette();
+  return p->swatch->palette();
 }
 
 QSize ColorPaletteWidget::colorSize() const
 {
-    return p->swatch->colorSize();
+  return p->swatch->colorSize();
 }
 
 Swatch::ColorSizePolicy ColorPaletteWidget::colorSizePolicy() const
 {
-    return p->swatch->colorSizePolicy();
+  return p->swatch->colorSizePolicy();
 }
 
 QPen ColorPaletteWidget::border() const
 {
-    return p->swatch->border();
+  return p->swatch->border();
 }
 
 int ColorPaletteWidget::forcedRows() const
 {
-    return p->swatch->forcedRows();
+  return p->swatch->forcedRows();
 }
 int ColorPaletteWidget::forcedColumns() const
 {
-    return p->swatch->forcedColumns();
+  return p->swatch->forcedColumns();
 }
 
 bool ColorPaletteWidget::readOnly() const
 {
-    return p->read_only;
+  return p->read_only;
 }
 
 QColor ColorPaletteWidget::currentColor() const
 {
-    return p->swatch->selectedColor();
+  return p->swatch->selectedColor();
 }
 
 void ColorPaletteWidget::setModel(ColorPaletteModel* model)
 {
-    if ( model == p->model )
-        return;
-    p->model = model;
-    p->swatch->setPalette(ColorPalette());
-    p->palette_list->setModel(model);
+  if (model == p->model)
+    return;
+  p->model = model;
+  p->swatch->setPalette(ColorPalette());
+  p->palette_list->setModel(model);
 }
 
 void ColorPaletteWidget::setColorSize(const QSize& colorSize)
 {
-    p->swatch->setColorSize(colorSize);
+  p->swatch->setColorSize(colorSize);
 }
 
 void ColorPaletteWidget::setColorSizePolicy(Swatch::ColorSizePolicy colorSizePolicy)
 {
-    p->swatch->setColorSizePolicy(colorSizePolicy);
+  p->swatch->setColorSizePolicy(colorSizePolicy);
 }
 
 void ColorPaletteWidget::setBorder(const QPen& border)
 {
-    p->swatch->setBorder(border);
+  p->swatch->setBorder(border);
 }
 
 void ColorPaletteWidget::setForcedRows(int forcedRows)
 {
-    p->swatch->setForcedRows(forcedRows);
+  p->swatch->setForcedRows(forcedRows);
 }
 
 void ColorPaletteWidget::setForcedColumns(int forcedColumns)
 {
-    p->swatch->setForcedColumns(forcedColumns);
+  p->swatch->setForcedColumns(forcedColumns);
 }
 
 void ColorPaletteWidget::setReadOnly(bool readOnly)
 {
-    if ( readOnly == p->read_only )
-        return;
+  if (readOnly == p->read_only)
+    return;
 
-    p->swatch->setReadOnly(readOnly);
-    p->group_edit_list->setVisible(!readOnly);
-    p->group_edit_palette->setVisible(!readOnly);
-    readOnlyChanged(p->read_only = readOnly);
+  p->swatch->setReadOnly(readOnly);
+  p->group_edit_list->setVisible(!readOnly);
+  p->group_edit_palette->setVisible(!readOnly);
+  readOnlyChanged(p->read_only = readOnly);
 }
 
 bool ColorPaletteWidget::setCurrentColor(const QColor& color)
 {
-    const auto& palette = p->swatch->palette();
-    for ( int i = 0; i < palette.count(); i++ )
+  const auto& palette = p->swatch->palette();
+  for (int i = 0; i < palette.count(); i++)
+  {
+    if (palette.colorAt(i) == color)
     {
-        if ( palette.colorAt(i) == color )
-        {
-            p->swatch->setSelected(i);
-            return true;
-        }
+      p->swatch->setSelected(i);
+      return true;
     }
+  }
 
-    p->swatch->clearSelection();
-    return false;
+  p->swatch->clearSelection();
+  return false;
 }
 
 void ColorPaletteWidget::on_palette_list_currentIndexChanged(int index)
 {
-    if ( !p->model || index == -1)
-        p->swatch->setPalette(ColorPalette());
-    else
-        p->swatch->setPalette(p->model->palette(index));
+  if (!p->model || index == -1)
+    p->swatch->setPalette(ColorPalette());
+  else
+    p->swatch->setPalette(p->model->palette(index));
 
-    p->swatch->palette().setDirty(false);
+  p->swatch->palette().setDirty(false);
 }
 
 void ColorPaletteWidget::on_swatch_doubleClicked(int index)
 {
-    if ( !p->read_only )
-    {
-        ColorDialog dialog(this);
-        dialog.setAlphaEnabled(false);
-        dialog.setColor(p->swatch->palette().colorAt(index));
-        if ( dialog.exec() )
-            p->swatch->palette().setColorAt(index, dialog.color());
-    }
+  if (!p->read_only)
+  {
+    ColorDialog dialog(this);
+    dialog.setAlphaEnabled(false);
+    dialog.setColor(p->swatch->palette().colorAt(index));
+    if (dialog.exec())
+      p->swatch->palette().setColorAt(index, dialog.color());
+  }
 }
 
 int ColorPaletteWidget::currentRow() const
 {
-    return p->palette_list->currentIndex();
+  return p->palette_list->currentIndex();
 }
 
 void ColorPaletteWidget::setCurrentRow(int row)
 {
-    p->palette_list->setCurrentIndex(row);
+  p->palette_list->setCurrentIndex(row);
 }
 
 void ColorPaletteWidget::clearCurrentColor()
 {
-    p->swatch->clearSelection();
+  p->swatch->clearSelection();
 }
 
 } // namespace color_widgets
