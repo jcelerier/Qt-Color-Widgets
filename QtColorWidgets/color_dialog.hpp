@@ -46,7 +46,7 @@ public:
     Close
   };
   W_ENUM(ButtonMode, OkCancel, OkApplyCancel, Close)
-  explicit ColorDialog(QWidget* parent = 0, Qt::WindowFlags f = 0);
+  explicit ColorDialog(QWidget* parent = 0, Qt::WindowFlags f = {});
 
   /**
    * Get currently selected color

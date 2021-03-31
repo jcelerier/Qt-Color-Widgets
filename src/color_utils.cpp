@@ -31,10 +31,10 @@ namespace color_widgets
 namespace detail
 {
 
-QColor color_from_lch(qreal hue, qreal chroma, qreal luma, qreal alpha)
+QColor color_from_lch(color_float hue, color_float chroma, color_float luma, color_float alpha)
 {
-  qreal h1 = hue * 6;
-  qreal x = chroma * (1 - qAbs(std::fmod(h1, 2) - 1));
+  color_float h1 = hue * 6;
+  color_float x = chroma * (1 - qAbs(std::fmod(h1, 2) - 1));
   QColor col;
   if (h1 >= 0 && h1 < 1)
     col = QColor::fromRgbF(chroma, x, 0);
@@ -49,7 +49,7 @@ QColor color_from_lch(qreal hue, qreal chroma, qreal luma, qreal alpha)
   else if (h1 < 6)
     col = QColor::fromRgbF(chroma, 0, x);
 
-  qreal m = luma - color_lumaF(col);
+  color_float m = luma - color_lumaF(col);
 
   return QColor::fromRgbF(
       qBound(0.0, col.redF() + m, 1.0),
@@ -58,11 +58,11 @@ QColor color_from_lch(qreal hue, qreal chroma, qreal luma, qreal alpha)
       alpha);
 }
 
-QColor color_from_hsl(qreal hue, qreal sat, qreal lig, qreal alpha)
+QColor color_from_hsl(color_float hue, color_float sat, color_float lig, color_float alpha)
 {
-  qreal chroma = (1 - qAbs(2 * lig - 1)) * sat;
-  qreal h1 = hue * 6;
-  qreal x = chroma * (1 - qAbs(std::fmod(h1, 2) - 1));
+  color_float chroma = (1 - qAbs(2 * lig - 1)) * sat;
+  color_float h1 = hue * 6;
+  color_float x = chroma * (1 - qAbs(std::fmod(h1, 2) - 1));
   QColor col;
   if (h1 >= 0 && h1 < 1)
     col = QColor::fromRgbF(chroma, x, 0);
@@ -77,7 +77,7 @@ QColor color_from_hsl(qreal hue, qreal sat, qreal lig, qreal alpha)
   else if (h1 < 6)
     col = QColor::fromRgbF(chroma, 0, x);
 
-  qreal m = lig - chroma / 2;
+  color_float m = lig - chroma / 2;
 
   return QColor::fromRgbF(
       qBound(0.0, col.redF() + m, 1.0),

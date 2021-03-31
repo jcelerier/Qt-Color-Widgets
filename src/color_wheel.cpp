@@ -60,7 +60,11 @@ public:
   QPixmap hue_ring;
   QImage inner_selector;
   DisplayFlags display_flags;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
   QColor (*color_from)(qreal, qreal, qreal, qreal);
+#else
+  QColor (*color_from)(float, float, float, float);
+#endif
   QColor (*rainbow_from_hue)(qreal);
   int max_size = 128;
 

@@ -80,7 +80,7 @@ add_library(${COLOR_WIDGETS_LIBRARY} STATIC
 
 generate_export_header(${COLOR_WIDGETS_LIBRARY})
 target_compile_definitions(${COLOR_WIDGETS_LIBRARY} PRIVATE QTCOLORWIDGETS_LIBRARY)
-target_link_libraries(${COLOR_WIDGETS_LIBRARY} PUBLIC Qt5::Widgets)
+target_link_libraries(${COLOR_WIDGETS_LIBRARY} PUBLIC ${QT_PREFIX}::Widgets)
 target_include_directories(${COLOR_WIDGETS_LIBRARY}
   PRIVATE "${PROJECT_SOURCE_DIR}/QtColorWidgets"
   PUBLIC "${PROJECT_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}")

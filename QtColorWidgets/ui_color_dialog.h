@@ -10,7 +10,11 @@
 #define UI_COLOR_DIALOG_H
 
 #include <QtCore/QVariant>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #include <QtWidgets/QAction>
+#else
+#include <QtGui/QAction>
+#endif
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QDialog>

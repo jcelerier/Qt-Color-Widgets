@@ -24,7 +24,9 @@
 
 #include "ui_color_dialog.h"
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #include <QDesktopWidget>
+#endif
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QMimeData>
@@ -319,18 +321,28 @@ void ColorDialog::dropEvent(QDropEvent* event)
 
 static QColor get_screen_color(const QPoint& global_pos)
 {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
   WId id = QApplication::desktop()->winId();
   QImage img = QPixmap::grabWindow(id, global_pos.x(), global_pos.y(), 1, 1).toImage();
 #else
+  QScreen* screen{};
+#if (QT_VERSION < QT_VERSION_CHECK(5, 10, 0))
   int screenNum = QApplication::desktop()->screenNumber(global_pos);
-  QScreen* screen = QApplication::screens().at(screenNum);
+  screen = QApplication::screens().at(screenNum);
+#else
+  screen = QApplication::screenAt(global_pos);
+#endif
 
   WId wid = QApplication::desktop()->winId();
   QImage img = screen->grabWindow(wid, global_pos.x(), global_pos.y(), 1, 1).toImage();
 #endif
 
   return img.pixel(0, 0);
+#else
+  qWarning() << "get_screen_color: not supported yet on Qt 6";
+  return QColor();
+#endif
 }
 
 void ColorDialog::mouseReleaseEvent(QMouseEvent* event)

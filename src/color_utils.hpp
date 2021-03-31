@@ -29,6 +29,12 @@ namespace color_widgets
 namespace detail
 {
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+using color_float = qreal;
+#else
+using color_float = float;
+#endif
+
 inline qreal color_chromaF(const QColor& c)
 {
   qreal max = qMax(c.redF(), qMax(c.greenF(), c.blueF()));
@@ -40,7 +46,7 @@ inline qreal color_lumaF(const QColor& c)
 {
   return 0.30 * c.redF() + 0.59 * c.greenF() + 0.11 * c.blueF();
 }
-QColor color_from_lch(qreal hue, qreal chroma, qreal luma, qreal alpha = 1);
+QColor color_from_lch(color_float hue, color_float chroma, color_float luma, color_float alpha = 1);
 
 inline QColor rainbow_lch(qreal hue)
 {
@@ -68,7 +74,7 @@ inline qreal color_HSL_saturationF(const QColor& col)
   return c / (1 - qAbs(2 * l - 1));
 }
 
-QColor color_from_hsl(qreal hue, qreal sat, qreal lig, qreal alpha = 1);
+QColor color_from_hsl(color_float hue, color_float sat, color_float lig, color_float alpha = 1);
 
 QPixmap alpha_pixmap();
 
